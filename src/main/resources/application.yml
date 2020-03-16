@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    active: development
+
+server:
+  port: 8888
+
+helloworld:
+  message: running in default mode
+
+---
+spring:
+  profiles: development
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017
+      database: bitcoin
+
+helloworld:
+  message: running in development
+
+---
+spring:
+  profiles: production
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017
+      database: bitcoin
+
+helloworld:
+  message: running in production
