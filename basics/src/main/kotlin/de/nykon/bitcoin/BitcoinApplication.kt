@@ -2,6 +2,7 @@ package de.nykon.bitcoin
 
 import de.nykon.bitcoin.value.Customer
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
