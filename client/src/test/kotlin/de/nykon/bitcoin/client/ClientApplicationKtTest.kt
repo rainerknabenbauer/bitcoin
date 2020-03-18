@@ -6,35 +6,72 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
+
 internal class ClientApplicationKtTest {
 
     var cryptoClient = CryptoClient()
 
     @Test
-    fun `GET orders on bitcoin_de`() {
+    fun `GET btceur order book on bitcoin_de`() {
 
         val httpMethod = "GET"
-        val requestParams = ""
-        val uri = "https://api.bitcoin.de/v4/orders"
+        val uriString = "https://api.bitcoin.de/v4/btceur/orderbook"
+        val requestParams = "type=buy"
+        val requestBody = ""
+        val uriFull = "$uriString?$requestParams"
         val apiKey = System.getenv("bitcoin.api.key")
         val apiSecret = System.getenv("bitcoin.api.secret")
         val nonce = System.currentTimeMillis().toString()
-        val md5Hash = cryptoClient.hashMd5(requestParams)
+        val md5Hash = cryptoClient.hashMd5(requestBody)
 
-        val hmachData = cryptoClient.getHmacData(httpMethod, uri, apiKey, nonce, md5Hash)
+        val hmacData = cryptoClient.getHmacData(httpMethod, uriFull, apiKey, nonce, md5Hash)
+        val hmacSignature = cryptoClient.getHmacSignature(hmacData, apiSecret)
+        val httpClient : HttpClient = HttpClient.newHttpClient()
+
+        val httpRequest = HttpRequest.newBuilder()
+                .GET()
+                .uri(java.net.URI.create(uriFull))
+                .setHeader("X-API-KEY", apiKey)
+                .setHeader("X-API-NONCE", nonce)
+                .setHeader("X-API-SIGNATURE", hmacSignature)
+                .build()
+
+        val send = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
+
+        println(uriFull)
+        println(send.headers())
+        println(send.body())
+        println(send.statusCode())
+    }
+
+    @Test
+    fun `GET orders on bitcoin_de`() {
+
+        val httpMethod = "GET"
+        val uriString = "https://api.bitcoin.de/v4/orders"
+        val requestParams = ""
+        val requestBody = ""
+        val uriFull = "$uriString"
+        val apiKey = System.getenv("bitcoin.api.key")
+        val apiSecret = System.getenv("bitcoin.api.secret")
+        val nonce = System.currentTimeMillis().toString()
+        val md5Hash = cryptoClient.hashMd5(requestBody)
+
+        val hmachData = cryptoClient.getHmacData(httpMethod, uriString, apiKey, nonce, md5Hash)
         val hmacSignature = cryptoClient.getHmacSignature(hmachData, apiSecret)
         val httpClient : HttpClient = HttpClient.newHttpClient()
 
         val httpRequest = HttpRequest.newBuilder()
                 .GET()
+                .uri(java.net.URI.create(uriFull))
                 .setHeader("X-API-KEY", apiKey)
                 .setHeader("X-API-NONCE", nonce)
                 .setHeader("X-API-SIGNATURE", hmacSignature)
-                .uri(java.net.URI.create(uri))
                 .build()
 
         val send = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
 
+        println(uriFull)
         println(send.headers())
         println(send.body())
         println(send.statusCode())
