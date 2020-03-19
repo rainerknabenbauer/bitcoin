@@ -1,7 +1,8 @@
 package de.nykon.bitcoin.client
 
 import com.google.common.hash.Hashing
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.context.annotation.ComponentScan
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -16,7 +17,8 @@ val API_KEY : String = System.getenv("bitcoin.api.key")
 val TIMESTAMP : String = System.currentTimeMillis().toString()
 val URI = "https://api.bitcoin.de/v4/trades"
 
-@SpringBootApplication
+@ComponentScan
+@EnableAutoConfiguration
 open class ClientApplication
 
 fun main() {
