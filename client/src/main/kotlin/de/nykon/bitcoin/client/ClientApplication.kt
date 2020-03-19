@@ -1,6 +1,7 @@
 package de.nykon.bitcoin.client
 
 import com.google.common.hash.Hashing
+import org.springframework.boot.autoconfigure.SpringBootApplication
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -14,6 +15,9 @@ import javax.xml.bind.DatatypeConverter
 val API_KEY : String = System.getenv("bitcoin.api.key")
 val TIMESTAMP : String = System.currentTimeMillis().toString()
 val URI = "https://api.bitcoin.de/v4/trades"
+
+@SpringBootApplication
+open class ClientApplication
 
 fun main() {
 

@@ -1,0 +1,32 @@
+package de.nykon.bitcoin.client.batch
+
+import de.nykon.bitcoin.client.repository.value.Offer
+import de.nykon.bitcoin.client.repository.value.PriceBatch
+import de.nykon.bitcoin.client.value.orders.OrdersRoot
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import java.math.BigDecimal
+import java.util.*
+import kotlin.collections.ArrayList
+
+class PriceProcessor {
+
+    private val log: Logger = LoggerFactory.getLogger(PriceProcessor::class.java)
+
+    fun process(ordersRoot: OrdersRoot): PriceBatch? {
+
+        val orders = ordersRoot.orders
+        val offers = ArrayList<Offer>()
+
+        if (Objects.nonNull(orders)) {
+            orders!!.forEach { order -> offers.add(
+                    Offer(BigDecimal.valueOf(order.price),
+                            BigDecimal.valueOf(order.max_amount_currency_to_trade))) }
+        } else {
+            log.error("Received 0 orders from bitcoin.de")
+        }
+
+        return PriceBatch(System.currentTimeMillis(), offers)
+    }
+
+}

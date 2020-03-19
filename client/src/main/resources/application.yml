@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: development
+
+---
+spring:
+  profiles: development
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017
+      database: bitcoin
+---
+spring:
+  profiles: production
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017
+      database: bitcoin

@@ -1,15 +1,31 @@
 package de.nykon.bitcoin.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import de.nykon.bitcoin.client.batch.PriceProcessor
+import de.nykon.bitcoin.client.repository.BitcoinRepository
+import de.nykon.bitcoin.client.repository.value.Offer
+import de.nykon.bitcoin.client.repository.value.PriceBatch
 import de.nykon.bitcoin.client.value.orders.OrdersRoot
 import org.junit.Assert
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestTemplate
+import org.junit.runner.RunWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit4.SpringRunner
+import java.math.BigDecimal
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.util.*
+import kotlin.collections.ArrayList
 
-
+@RunWith(SpringRunner::class)
+@SpringBootTest(classes = [ClientApplication::class])
 internal class ClientApplicationKtTest {
+
+    @Autowired
+    lateinit var repository: BitcoinRepository
 
     var cryptoClient = CryptoClient()
 
@@ -40,10 +56,17 @@ internal class ClientApplicationKtTest {
 
         val send = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
 
+        val objectMapper = ObjectMapper()
+        val ordersRoot = objectMapper.readValue(send.body().toByteArray(), OrdersRoot::class.java)
+
         println(uriFull)
         println(send.headers())
         println(send.body())
-        println(send.statusCode())
+
+        val priceProcessor = PriceProcessor()
+        val priceBatch = priceProcessor.process(ordersRoot)
+
+        repository.save(priceBatch).subscribe()
     }
 
     @Test
@@ -73,17 +96,17 @@ internal class ClientApplicationKtTest {
 
         val send = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
 
-        //create ObjectMapper instance
-        //create ObjectMapper instance
         val objectMapper = ObjectMapper()
-
-        //convert json string to object
-
-        //convert json string to object
         val readValue = objectMapper.readValue(send.body().toByteArray(), OrdersRoot::class.java)
 
         println(uriFull)
         println(send.headers())
+        println(send.body())
+
+        if (Objects.nonNull(readValue.orders)) {
+            println("Count: " + readValue.orders!!.count())
+        }
+
     }
 
     @Test
