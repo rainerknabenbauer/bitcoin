@@ -2,6 +2,9 @@ spring:
   profiles:
     active: development
 
+server:
+  port: 8888
+
 ---
 spring:
   profiles: development
@@ -9,6 +12,7 @@ spring:
     mongodb:
       uri: mongodb://127.0.0.1:27017
       database: bitcoin
+
 ---
 spring:
   profiles: production
@@ -16,3 +20,6 @@ spring:
     mongodb:
       uri: mongodb://127.0.0.1:27017
       database: bitcoin
+
+server:
+  port: 80

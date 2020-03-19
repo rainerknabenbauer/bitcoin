@@ -1,8 +1,7 @@
-package de.nykon.bitcoin.client.repository.value
+package de.nykon.bitcoin.backend.repository.value
 
-import de.nykon.bitcoin.client.value.orders.Order
+import de.nykon.bitcoin.client.repository.value.Offer
 import org.springframework.data.mongodb.core.mapping.Document
-import java.math.BigDecimal
 
 /**
  * Saves all offers returned in one query.

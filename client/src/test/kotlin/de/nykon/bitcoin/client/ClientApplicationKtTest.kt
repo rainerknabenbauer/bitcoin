@@ -2,13 +2,20 @@ package de.nykon.bitcoin.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.nykon.bitcoin.OrdersRoot
+import okhttp3.Call
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
+import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.*
+
 
 @SpringBootTest(classes = [ClientApplication::class])
 internal class ClientApplicationKtTest {
@@ -34,20 +41,32 @@ internal class ClientApplicationKtTest {
 
         val httpRequest = HttpRequest.newBuilder()
                 .GET()
-                .uri(java.net.URI.create(uriFull))
+                .uri(URI.create(uriFull))
                 .setHeader("X-API-KEY", apiKey)
                 .setHeader("X-API-NONCE", nonce)
                 .setHeader("X-API-SIGNATURE", hmacSignature)
                 .build()
 
-        val send = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
-
-        val objectMapper = ObjectMapper()
-        val ordersRoot = objectMapper.readValue(send.body().toByteArray(), OrdersRoot::class.java)
+        val receive = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
 
         println(uriFull)
-        println(send.headers())
-        println(send.body())
+        println(receive.headers())
+        println(receive.body())
+        val uri = "http://localhost:8888/offers"
+
+        val client = OkHttpClient()
+        val body: RequestBody = RequestBody.create(
+                "application/json".toMediaTypeOrNull(), receive.body())
+
+        val request: Request = Request.Builder()
+                .url(uri)
+                .post(body)
+                .build()
+
+        val call: Call = client.newCall(request)
+        val response = call.execute()
+        println(response)
+
     }
 
     @Test
@@ -69,7 +88,7 @@ internal class ClientApplicationKtTest {
 
         val httpRequest = HttpRequest.newBuilder()
                 .GET()
-                .uri(java.net.URI.create(uriFull))
+                .uri(URI.create(uriFull))
                 .setHeader("X-API-KEY", apiKey)
                 .setHeader("X-API-NONCE", nonce)
                 .setHeader("X-API-SIGNATURE", hmacSignature)

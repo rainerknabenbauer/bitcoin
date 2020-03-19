@@ -1,9 +1,7 @@
 package de.nykon.bitcoin
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import org.springframework.data.mongodb.core.mapping.Document
 
-@Document
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Order {
     var order_id: String? = null
