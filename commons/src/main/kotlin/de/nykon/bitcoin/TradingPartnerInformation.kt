@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.client.value.orders
+package de.nykon.bitcoin
 
 class TradingPartnerInformation {
     var username: String? = null

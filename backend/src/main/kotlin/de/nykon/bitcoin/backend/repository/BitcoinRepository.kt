@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.client.repository
+package de.nykon.bitcoin.backend.repository
 
 import de.nykon.bitcoin.client.repository.value.PriceBatch
 import org.springframework.data.repository.reactive.ReactiveCrudRepository

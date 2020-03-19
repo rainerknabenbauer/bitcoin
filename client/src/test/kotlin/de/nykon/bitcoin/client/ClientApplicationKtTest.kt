@@ -1,15 +1,10 @@
 package de.nykon.bitcoin.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.nykon.bitcoin.client.batch.PriceProcessor
-import de.nykon.bitcoin.client.repository.BitcoinRepository
-import de.nykon.bitcoin.client.value.orders.OrdersRoot
+import de.nykon.bitcoin.OrdersRoot
 import org.junit.Assert
 import org.junit.jupiter.api.Test
-import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -17,9 +12,6 @@ import java.util.*
 
 @SpringBootTest(classes = [ClientApplication::class])
 internal class ClientApplicationKtTest {
-
-    @Autowired
-    lateinit var repository: BitcoinRepository
 
     var cryptoClient = CryptoClient()
 
@@ -56,11 +48,6 @@ internal class ClientApplicationKtTest {
         println(uriFull)
         println(send.headers())
         println(send.body())
-
-        val priceProcessor = PriceProcessor()
-        val priceBatch = priceProcessor.process(ordersRoot)
-
-        repository.save(priceBatch).subscribe()
     }
 
     @Test

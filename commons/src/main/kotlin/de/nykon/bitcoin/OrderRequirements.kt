@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.client.value.orders
+package de.nykon.bitcoin
 
 class OrderRequirements {
     var min_trust_level: String? = null

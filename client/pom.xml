@@ -16,6 +16,12 @@
   <dependencies>
 
     <dependency>
+      <groupId>de.nykon.bitcoin</groupId>
+      <artifactId>commons</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>28.2-jre</version>

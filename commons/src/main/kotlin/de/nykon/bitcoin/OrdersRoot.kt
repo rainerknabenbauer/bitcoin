@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.client.value.orders
+package de.nykon.bitcoin
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 

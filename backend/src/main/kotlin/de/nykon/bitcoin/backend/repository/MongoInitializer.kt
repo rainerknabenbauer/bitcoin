@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.client.repository
+package de.nykon.bitcoin.backend.repository
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.ReactiveMongoOperations

@@ -1,6 +1,7 @@
-package de.nykon.bitcoin.client.repository
+package de.nykon.bitcoin.backend.repository
 
 import com.mongodb.reactivestreams.client.MongoClients
+import de.nykon.bitcoin.backend.repository.BitcoinRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration
