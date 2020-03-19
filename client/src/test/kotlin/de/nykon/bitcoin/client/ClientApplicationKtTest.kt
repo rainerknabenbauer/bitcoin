@@ -1,5 +1,7 @@
 package de.nykon.bitcoin.client
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import de.nykon.bitcoin.client.value.orders.OrdersRoot
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 import java.net.http.HttpClient
@@ -71,10 +73,17 @@ internal class ClientApplicationKtTest {
 
         val send = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
 
+        //create ObjectMapper instance
+        //create ObjectMapper instance
+        val objectMapper = ObjectMapper()
+
+        //convert json string to object
+
+        //convert json string to object
+        val readValue = objectMapper.readValue(send.body().toByteArray(), OrdersRoot::class.java)
+
         println(uriFull)
         println(send.headers())
-        println(send.body())
-        println(send.statusCode())
     }
 
     @Test
