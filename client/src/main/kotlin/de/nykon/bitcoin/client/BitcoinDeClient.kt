@@ -10,7 +10,7 @@ class BitcoinDeClient {
 
     private var cryptoClient = CryptoClient()
 
-    fun storeOffers() {
+    fun getOffers(): String? {
 
         val httpMethod = "GET"
         val uriString = "https://api.bitcoin.de/v4/btceur/orderbook"
@@ -34,16 +34,13 @@ class BitcoinDeClient {
                 .setHeader("X-API-SIGNATURE", hmacSignature)
                 .build()
 
-        val send = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
-
-        val objectMapper = ObjectMapper()
-        val ordersRoot = objectMapper.readValue(send.body().toByteArray(), OrdersRoot::class.java)
+        val receive = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
 
         println(uriFull)
-        println(send.headers())
-        println(send.body())
+        println(receive.headers())
+        println(receive.body())
 
-        //TODO send to backend
+        return receive.body()
     }
 
 }

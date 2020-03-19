@@ -4,6 +4,11 @@ class ClientApplication
 
 fun main() {
 
-    val client = BitcoinDeClient()
-    client.storeOffers()
+    val bitcoinDeClient = BitcoinDeClient()
+    val offers = bitcoinDeClient.getOffers()
+
+    if (!offers.isNullOrEmpty()) {
+        val backendClient = BackendClient()
+        backendClient.persist(offers)
+    }
 }

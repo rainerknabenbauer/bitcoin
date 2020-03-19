@@ -52,21 +52,6 @@ internal class ClientApplicationKtTest {
         println(uriFull)
         println(receive.headers())
         println(receive.body())
-        val uri = "http://localhost:8888/offers"
-
-        val client = OkHttpClient()
-        val body: RequestBody = RequestBody.create(
-                "application/json".toMediaTypeOrNull(), receive.body())
-
-        val request: Request = Request.Builder()
-                .url(uri)
-                .post(body)
-                .build()
-
-        val call: Call = client.newCall(request)
-        val response = call.execute()
-        println(response)
-
     }
 
     @Test

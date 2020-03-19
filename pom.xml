@@ -13,10 +13,10 @@
   </parent>
 
   <modules>
+    <module>commons</module>
     <module>client</module>
     <module>basics</module>
     <module>backend</module>
-    <module>commons</module>
   </modules>
 
   <groupId>de.nykon.bitcoin</groupId>
@@ -28,6 +28,7 @@
   <properties>
     <java.version>11</java.version>
     <kotlin.version>1.3.61</kotlin.version>
+    <main.basedir>${project.basedir}</main.basedir>
   </properties>
 
   <dependencies>
@@ -71,8 +72,8 @@
   </dependencies>
 
   <build>
-    <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-    <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+    <sourceDirectory>${main.basedir}/src/main/kotlin</sourceDirectory>
+    <testSourceDirectory>${main.basedir}/src/test/kotlin</testSourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -90,7 +91,7 @@
             </goals>
             <configuration>
               <sourceDirs>
-                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                <sourceDir>${main.basedir}/src/main/kotlin</sourceDir>
               </sourceDirs>
             </configuration>
           </execution>
@@ -101,7 +102,7 @@
             </goals>
             <configuration>
               <sourceDirs>
-                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                <sourceDir>${main.basedir}/src/test/kotlin</sourceDir>
               </sourceDirs>
             </configuration>
           </execution>
@@ -154,5 +155,7 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
+
+
 
 </project>
