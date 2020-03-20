@@ -29,7 +29,7 @@ class OffersController {
         val size = ordersRoot.orders!!.size
         log.info("Received $size orders.")
 
-        val cycleInSeconds: Int = cycleInMs.div(1000).toInt()
+        val cycleInSeconds: Int = cycleInMs.div(60000).toInt()
 
         offersService.storePrice(ordersRoot, cycleInSeconds)
     }
