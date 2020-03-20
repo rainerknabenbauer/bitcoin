@@ -2,13 +2,17 @@ package de.nykon.bitcoin.client
 
 class ClientApplication
 
-fun main() {
+fun main(args : Array<String>) {
 
-    val bitcoinDeClient = BitcoinDeClient()
-    val offers = bitcoinDeClient.getOffers()
+    if (args.size < 2) {
+        println("Set on start: [1] ApiKey\n[2] ApiSecret")
+    } else {
+        val bitcoinDeClient = BitcoinDeClient()
+        val offers = bitcoinDeClient.getOffers(args[0], args[1])
 
-    if (!offers.isNullOrEmpty()) {
-        val backendClient = BackendClient()
-        backendClient.persist(offers)
+        if (!offers.isNullOrEmpty()) {
+            val backendClient = BackendClient()
+            backendClient.persist(offers)
+        }
     }
 }

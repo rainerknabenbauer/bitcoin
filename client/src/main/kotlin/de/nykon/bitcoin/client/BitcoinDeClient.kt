@@ -8,15 +8,15 @@ class BitcoinDeClient {
 
     private var cryptoClient = CryptoClient()
 
-    fun getOffers(): String? {
+    fun getOffers(apiKey: String, apiSecret: String): String? {
 
         val httpMethod = "GET"
         val uriString = "https://api.bitcoin.de/v4/btceur/orderbook"
         val requestParams = "type=buy"
         val requestBody = ""
         val uriFull = "$uriString?$requestParams"
-        val apiKey = System.getProperty("bitcoin.api.key")
-        val apiSecret = System.getProperty("bitcoin.api.secret")
+        //val apiKey = System.getProperty("bitcoin.api.key")
+        //val apiSecret = System.getProperty("bitcoin.api.secret")
         val nonce = System.currentTimeMillis().toString()
         val md5Hash = cryptoClient.hashMd5(requestBody)
 
