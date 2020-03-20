@@ -13,7 +13,6 @@
   </parent>
 
   <modules>
-    <module>commons</module>
     <module>client</module>
     <module>basics</module>
     <module>backend</module>

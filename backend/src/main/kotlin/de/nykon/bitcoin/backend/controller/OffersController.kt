@@ -1,9 +1,8 @@
 package de.nykon.bitcoin.backend.controller
 
-import de.nykon.bitcoin.OrdersRoot
 import de.nykon.bitcoin.backend.OffersService
+import de.nykon.bitcoin.backend.value.OrdersRoot
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
 import org.springframework.lang.NonNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping

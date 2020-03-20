@@ -1,7 +1,5 @@
 package de.nykon.bitcoin.client
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import de.nykon.bitcoin.OrdersRoot
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -17,8 +15,8 @@ class BitcoinDeClient {
         val requestParams = "type=buy"
         val requestBody = ""
         val uriFull = "$uriString?$requestParams"
-        val apiKey = System.getenv("bitcoin.api.key")
-        val apiSecret = System.getenv("bitcoin.api.secret")
+        val apiKey = System.getProperty("bitcoin.api.key")
+        val apiSecret = System.getProperty("bitcoin.api.secret")
         val nonce = System.currentTimeMillis().toString()
         val md5Hash = cryptoClient.hashMd5(requestBody)
 

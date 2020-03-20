@@ -1,8 +1,8 @@
 package de.nykon.bitcoin.backend
 
-import de.nykon.bitcoin.OrdersRoot
 import de.nykon.bitcoin.client.repository.value.Offer
 import de.nykon.bitcoin.backend.repository.value.PriceBatch
+import de.nykon.bitcoin.backend.value.OrdersRoot
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

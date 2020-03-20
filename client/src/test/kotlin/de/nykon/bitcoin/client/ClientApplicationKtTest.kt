@@ -1,13 +1,8 @@
 package de.nykon.bitcoin.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.nykon.bitcoin.OrdersRoot
-import okhttp3.Call
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import org.junit.Assert
+import de.nykon.bitcoin.client.value.OrdersRoot
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import java.net.URI
@@ -22,7 +17,6 @@ internal class ClientApplicationKtTest {
 
     var cryptoClient = CryptoClient()
 
-    @Test
     fun `GET btceur order book on bitcoin_de`() {
 
         val httpMethod = "GET"
@@ -54,7 +48,6 @@ internal class ClientApplicationKtTest {
         println(receive.body())
     }
 
-    @Test
     fun `GET orders on bitcoin_de`() {
 
         val httpMethod = "GET"
@@ -102,7 +95,7 @@ internal class ClientApplicationKtTest {
 
         val actualHash = cryptoClient.hashMd5(urlEncodedQuery)
 
-        Assert.assertEquals(expectedHash, actualHash)
+        Assertions.assertEquals(expectedHash, actualHash)
     }
 
     @Test
@@ -113,7 +106,7 @@ internal class ClientApplicationKtTest {
 
         val actualHash = cryptoClient.hashMd5(urlEncodedQuery)
 
-        Assert.assertEquals(expectedHash, actualHash)
+        Assertions.assertEquals(expectedHash, actualHash)
     }
 
     @Test
@@ -129,7 +122,7 @@ internal class ClientApplicationKtTest {
 
         val actual = cryptoClient.getHmacData(httpMethod, uri, apiKey, nonce, md5Hash)
 
-        Assert.assertEquals(actual, expected)
+        Assertions.assertEquals(actual, expected)
     }
 
 }
