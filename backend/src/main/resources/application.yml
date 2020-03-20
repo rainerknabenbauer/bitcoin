@@ -5,6 +5,17 @@ spring:
 server:
   port: 8888
 
+
+limits:
+  relative:
+    buyDiff: 0.05
+    sellDiff: 0.04
+    supplyAndDemandDiff: 0.02
+  fixed:
+    buyDiff: 250
+    sellDiff: 150
+    supplyAndDemandDiff: 250
+
 ---
 spring:
   profiles: development
@@ -12,6 +23,7 @@ spring:
     mongodb:
       uri: mongodb://127.0.0.1:27017
       database: bitcoin
+
 
 ---
 spring:

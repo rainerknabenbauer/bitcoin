@@ -15,20 +15,31 @@ class PriceProcessor {
 
     private val log: Logger = LoggerFactory.getLogger(PriceProcessor::class.java)
 
-    fun process(ordersRoot: OrdersRoot): PriceBatch? {
+    fun process(ordersRoot: OrdersRoot, cycleInMs: Int): PriceBatch? {
 
         val orders = ordersRoot.orders
         val offers = ArrayList<Offer>()
+        var accumulatedPrices = BigDecimal.ZERO
+        var averagePrice = BigDecimal.ZERO
 
         if (Objects.nonNull(orders)) {
-            orders!!.forEach { order -> offers.add(
-                    Offer(BigDecimal.valueOf(order.price),
-                            BigDecimal.valueOf(order.max_amount_currency_to_trade))) }
+            orders!!.forEach { order -> kotlin.run {
+
+                val price = BigDecimal.valueOf(order.price);
+                val amount = BigDecimal.valueOf(order.max_amount_currency_to_trade)
+
+                offers.add(Offer(price, amount))
+
+                accumulatedPrices = accumulatedPrices.add(price)
+            } }
+
+             averagePrice = accumulatedPrices.divideToIntegralValue(BigDecimal.valueOf(orders.size.toLong()))
+
         } else {
             log.error("Received 0 orders from bitcoin.de")
         }
 
-        return PriceBatch(System.currentTimeMillis(), offers)
+        return PriceBatch(System.currentTimeMillis(), cycleInMs, offers, averagePrice)
     }
 
 }

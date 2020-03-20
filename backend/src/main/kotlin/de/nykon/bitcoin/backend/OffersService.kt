@@ -14,8 +14,8 @@ class OffersService {
     @Autowired
     private lateinit var bitcoinRepository: BitcoinRepository
 
-    fun storePrice(ordersRoot: OrdersRoot) {
-        val priceBatch = priceProcessor.process(ordersRoot)!!
+    fun storePrice(ordersRoot: OrdersRoot, cycleInSeconds: Int) {
+        val priceBatch = priceProcessor.process(ordersRoot, cycleInSeconds)!!
         bitcoinRepository.save(priceBatch).subscribe()
     }
 
