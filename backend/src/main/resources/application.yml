@@ -8,13 +8,23 @@ server:
 
 limits:
   relative:
-    buyDiff: 0.05
-    sellDiff: 0.04
-    supplyAndDemandDiff: 0.02
+    buy:
+      short: 0.01
+      medium: 0.03
+      long: 0.05
+    sell:
+      short: 0.01
+      medium: 0.03
+      long: 0.05
   fixed:
-    buyDiff: 250
-    sellDiff: 150
-    supplyAndDemandDiff: 250
+    buy:
+      short: 50
+      medium: 150
+      long: 250
+    sell:
+      short: 50
+      medium: 150
+      long: 250
 
 ---
 spring:

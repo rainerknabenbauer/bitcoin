@@ -12,38 +12,55 @@ import java.util.stream.Collectors
  * If value has dropped and now equals a plateau / slightly changes in price.
  */
 @Service
-class TradingService(
+class PredictionService(
         private val repository: BitcoinRepository,
         private val fixedLimits: FixedLimits,
         private val relativeLimits: RelativeLimits) {
 
-    private val log: Logger = LoggerFactory.getLogger(TradingService::class.java)
+    private val log: Logger = LoggerFactory.getLogger(PredictionService::class.java)
+
+    fun getBuyDecision(): Boolean {
+
+        return shortBuyPrediction() && mediumBuyPrediction() && longBuyPrediction()
+    }
 
     /**
      * Takes the minimum amount (shortest time box) of data to predict price development.
      */
-    fun shortPrediction(dataPoints: ArrayList<PriceBatch>): Boolean {
-        val top5 = repository.findTop5ByOrderByTimestampDesc()!!
+    private fun shortBuyPrediction(): Boolean {
+        val top5 = repository.findTop5ByOrderByTimestampDesc()
 
-        return computeBuy(top5)
+        val start = top5.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
+        val end = top5.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
+
+        val averageDiff = start.average.minus(end.average)
+
+        if (averageDiff > fixedLimits.getBuyShort()) {
+            log.info("BUY because price has declined by $averageDiff")
+            return true;
+        }
+
+        return false;
+
+        return compute(top5)
     }
 
     /**
      * Takes the medium amount (medium time box) of data to predict price development.
      */
-    fun mediumPrediction(): Boolean {
-        val top10 = repository.findTop10ByOrderByTimestampDesc()!!
+    private fun mediumBuyPrediction(): Boolean {
+        val top10 = repository.findTop10ByOrderByTimestampDesc()
 
-        return computeBuy(top10)
+        return compute(top10)
     }
 
     /**
      * Takes the maximum amount (maximum time box) of data to predict price development.
      */
-    fun longPrediction(): Boolean {
-        val top20 = repository.findTop20ByOrderByTimestampDesc()!!
+    private fun longBuyPrediction(): Boolean {
+        val top20 = repository.findTop20ByOrderByTimestampDesc()
 
-        return computeBuy(top20)
+        return compute(top20)
     }
 
     /**
@@ -57,14 +74,14 @@ class TradingService(
     /**
      *
      */
-    private fun computeBuy(batch: List<PriceBatch>): Boolean {
+    private fun compute(batch: List<PriceBatch>): Boolean {
 
         val start = batch.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
         val end = batch.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
 
         val averageDiff = start.average.minus(end.average)
 
-        if (averageDiff > fixedLimits.getBuyDiff()) {
+        if (averageDiff > fixedLimits.getBuyShort()) {
             log.info("BUY because price has declined by $averageDiff")
             return true;
         }
@@ -72,6 +89,9 @@ class TradingService(
         return false;
     }
 
+    /**
+     * Curve instability.
+     */
     private fun volatility(batch: List<PriceBatch?>?) {
 
         val peak = batch?.stream()?.map {
@@ -80,11 +100,6 @@ class TradingService(
         val valley = batch.stream().map {
             batchItem -> batchItem!!.average }?.collect(Collectors.toList())?.min()!!
 
-    }
-
-    fun getBuyDecision(): Boolean {
-        TODO("Not yet implemented")
-        return false;
     }
 
 }
