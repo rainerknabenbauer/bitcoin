@@ -21,14 +21,56 @@ class PredictionService(
 
     fun getBuyDecision(): Boolean {
 
-        return shortBuyPrediction() && mediumBuyPrediction() && longBuyPrediction()
+        val top5 = repository.findTop5ByOrderByTimestampDesc()
+        shortBuyPrediction(top5)
+
+        val top10 = repository.findTop10ByOrderByTimestampDesc()
+        mediumBuyPrediction(top10)
+
+        val top20 = repository.findTop20ByOrderByTimestampDesc()
+        longBuyPrediction(top20)
+
+        return shortBuyPrediction(top5) && mediumBuyPrediction(top10) && longBuyPrediction(top20)
     }
 
     /**
      * Takes the minimum amount (shortest time box) of data to predict price development.
      */
-    private fun shortBuyPrediction(): Boolean {
-        val top5 = repository.findTop5ByOrderByTimestampDesc()
+    fun shortBuyPrediction(top5: List<PriceBatch>): Boolean {
+
+        val start = top5.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
+        val end = top5.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
+
+        val averageDiff = end.average.minus(start.average).abs()
+
+        if (averageDiff > fixedLimits.getBuyShort()) {
+            log.info("BUY because price has risen by $averageDiff")
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Takes the medium amount (medium time box) of data to predict price development.
+     */
+    fun mediumBuyPrediction(top10: List<PriceBatch>): Boolean {
+
+        return compute(top10)
+    }
+
+    /**
+     * Takes the maximum amount (maximum time box) of data to predict price development.
+     */
+    fun longBuyPrediction(top20: List<PriceBatch>): Boolean {
+
+        return compute(top20)
+    }
+
+    /**
+     * Takes the minimum amount (shortest time box) of data to predict price development.
+     */
+    fun shortSellPrediction(top5: List<PriceBatch>): Boolean {
 
         val start = top5.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
         val end = top5.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
@@ -41,26 +83,18 @@ class PredictionService(
         }
 
         return false;
-
-        return compute(top5)
     }
 
     /**
-     * Takes the medium amount (medium time box) of data to predict price development.
+     * Sells all available coins once price drop is registered.
+     *
+     * verb - used in conversation to stop someone from talking or to end oneselfs bad story.
+     * - Urban Dictionary
      */
-    private fun mediumBuyPrediction(): Boolean {
-        val top10 = repository.findTop10ByOrderByTimestampDesc()
+    fun bail() {
 
-        return compute(top10)
-    }
+        //TODO once long term drops x trigger sale
 
-    /**
-     * Takes the maximum amount (maximum time box) of data to predict price development.
-     */
-    private fun longBuyPrediction(): Boolean {
-        val top20 = repository.findTop20ByOrderByTimestampDesc()
-
-        return compute(top20)
     }
 
     /**

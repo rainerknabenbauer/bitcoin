@@ -9,18 +9,18 @@ import java.math.BigDecimal
  */
 @Component
 class FixedLimits(
-        @Value("limits.fixed.buy.short") private val buyShort: String,
-        @Value("limits.fixed.buy.medium") private val buyMedium: String,
-        @Value("limits.fixed.buy.long") private val buyLong: String,
+        @Value("\${limits.fixed.buy.short}") private val buyShort: String,
+        @Value("\${limits.fixed.buy.medium}") private val buyMedium: String,
+        @Value("\${limits.fixed.buy.long}") private val buyLong: String,
 
-        @Value("limits.fixed.sell.short") private val sellShort: String,
-        @Value("limits.fixed.sell.medium") private val sellMedium: String,
-        @Value("limits.fixed.sell.long") private val sellLong: String,
+        @Value("\${limits.fixed.sell.short}") private val sellShort: String,
+        @Value("\${limits.fixed.sell.medium}") private val sellMedium: String,
+        @Value("\${limits.fixed.sell.long}") private val sellLong: String,
 
         @Value("limits.fixed.supplyAndDemandDiff") private val supplyAndDemandDiffString: String) {
 
-
     fun getBuyShort(): BigDecimal {
+        println(buyShort)
         return BigDecimal.valueOf(buyShort.toDouble())
     }
 
