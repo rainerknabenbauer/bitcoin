@@ -12,10 +12,12 @@ class FixedLimits(
         @Value("\${limits.fixed.buy.short}") private val buyShort: String,
         @Value("\${limits.fixed.buy.medium}") private val buyMedium: String,
         @Value("\${limits.fixed.buy.long}") private val buyLong: String,
+        @Value("\${limits.fixed.buy.stepsize}") private val buyStepsize: String,
 
         @Value("\${limits.fixed.sell.short}") private val sellShort: String,
         @Value("\${limits.fixed.sell.medium}") private val sellMedium: String,
         @Value("\${limits.fixed.sell.long}") private val sellLong: String,
+        @Value("\${limits.fixed.sell.stepsize}") private val sellStepsize: String,
 
         @Value("limits.fixed.supplyAndDemandDiff") private val supplyAndDemandDiffString: String) {
 
@@ -32,6 +34,10 @@ class FixedLimits(
         return BigDecimal.valueOf(buyLong.toDouble())
     }
 
+    fun getBuyStepsize(): BigDecimal {
+        return BigDecimal.valueOf(buyStepsize.toDouble())
+    }
+
     fun getSellShort(): BigDecimal {
         return BigDecimal.valueOf(sellShort.toDouble())
     }
@@ -42,6 +48,10 @@ class FixedLimits(
 
     fun getSellLong(): BigDecimal {
         return BigDecimal.valueOf(sellLong.toDouble())
+    }
+
+    fun getSellStepsize(): BigDecimal {
+        return BigDecimal.valueOf(sellStepsize.toDouble())
     }
 
     fun getSupplyAndDemand(): BigDecimal {

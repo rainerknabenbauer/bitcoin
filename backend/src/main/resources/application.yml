@@ -19,13 +19,14 @@ limits:
   fixed:
     buy:
       short: 50
-      medium: 150
+      medium: 125
       long: 250
+      stepsize: 5
     sell:
-      short: 50
-      medium: 150
-      long: 250
-
+      short: -30
+      medium: -70
+      long: -150
+      stepsize: 0
 ---
 spring:
   profiles: development

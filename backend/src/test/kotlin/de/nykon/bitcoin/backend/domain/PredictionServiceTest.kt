@@ -15,226 +15,149 @@ internal class PredictionServiceTest {
     @Autowired
     lateinit var testee: PredictionService
 
+
     @Test
-    fun `shortBuyPrediction returns DONT BUY while flatline`() {
+    fun `equities are SOLD on price drop`() {
 
         var top5 = ArrayList<PriceBatch>()
+        var top10 = ArrayList<PriceBatch>()
+        var top20 = ArrayList<PriceBatch>()
 
-        val t0 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(6000))
-        val t1 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5980))
-        val t2 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5960))
-        val t3 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5920))
-        val t4 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5900))
+        val t0 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(6400))
+        val t1 = PriceBatch(1, 5, Collections.emptyList(), BigDecimal.valueOf(6430))
+        val t2 = PriceBatch(2, 5, Collections.emptyList(), BigDecimal.valueOf(6400))
+        val t3 = PriceBatch(3, 5, Collections.emptyList(), BigDecimal.valueOf(6350))
+        val t4 = PriceBatch(4, 5, Collections.emptyList(), BigDecimal.valueOf(6320))
+        val t5 = PriceBatch(5, 5, Collections.emptyList(), BigDecimal.valueOf(6275))
+        val t6 = PriceBatch(6, 5, Collections.emptyList(), BigDecimal.valueOf(6200))
+        val t7 = PriceBatch(7, 5, Collections.emptyList(), BigDecimal.valueOf(6175))
+        val t8 = PriceBatch(8, 5, Collections.emptyList(), BigDecimal.valueOf(6125))
+        val t9 = PriceBatch(9, 5, Collections.emptyList(), BigDecimal.valueOf(6175))
+        val t10 = PriceBatch(10, 5, Collections.emptyList(), BigDecimal.valueOf(6150))
+        val t11 = PriceBatch(11, 5, Collections.emptyList(), BigDecimal.valueOf(6175))
+        val t12 = PriceBatch(12, 5, Collections.emptyList(), BigDecimal.valueOf(6175))
+        val t13 = PriceBatch(13, 5, Collections.emptyList(), BigDecimal.valueOf(6150))
+        val t14 = PriceBatch(14, 5, Collections.emptyList(), BigDecimal.valueOf(6125))
+        val t15 = PriceBatch(15, 5, Collections.emptyList(), BigDecimal.valueOf(6110))
+        val t16 = PriceBatch(16, 5, Collections.emptyList(), BigDecimal.valueOf(6100))
+        val t17 = PriceBatch(17, 5, Collections.emptyList(), BigDecimal.valueOf(6075))
+        val t18 = PriceBatch(18, 5, Collections.emptyList(), BigDecimal.valueOf(6060))
+        val t19 = PriceBatch(19, 5, Collections.emptyList(), BigDecimal.valueOf(6075))
 
-        top5.add(t0)
-        top5.add(t1)
-        top5.add(t2)
-        top5.add(t3)
-        top5.add(t4)
-        assertEquals(5, top5.size)
+        top5.add(t15)
+        top5.add(t16)
+        top5.add(t17)
+        top5.add(t18)
+        top5.add(t19)
+
+        top10.add(t10)
+        top10.add(t11)
+        top10.add(t12)
+        top10.add(t13)
+        top10.add(t14)
+        top10.add(t15)
+        top10.add(t16)
+        top10.add(t17)
+        top10.add(t18)
+        top10.add(t19)
+
+        top20.add(t0)
+        top20.add(t1)
+        top20.add(t2)
+        top20.add(t3)
+        top20.add(t4)
+        top20.add(t5)
+        top20.add(t6)
+        top20.add(t7)
+        top20.add(t8)
+        top20.add(t9)
+        top20.add(t10)
+        top20.add(t11)
+        top20.add(t12)
+        top20.add(t13)
+        top20.add(t14)
+        top20.add(t15)
+        top20.add(t16)
+        top20.add(t17)
+        top20.add(t18)
+        top20.add(t19)
+
+        assertTrue(testee.shortSellPrediction(top5))
+        assertTrue(testee.mediumSellPrediction(top10))
+        assertTrue(testee.longSellPrediction(top20))
+
+    }
+
+    @Test
+    fun `DONT BUY on price drop`() {
+
+        var top5 = ArrayList<PriceBatch>()
+        var top10 = ArrayList<PriceBatch>()
+        var top20 = ArrayList<PriceBatch>()
+
+        val t0 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(6400))
+        val t1 = PriceBatch(1, 5, Collections.emptyList(), BigDecimal.valueOf(6430))
+        val t2 = PriceBatch(2, 5, Collections.emptyList(), BigDecimal.valueOf(6400))
+        val t3 = PriceBatch(3, 5, Collections.emptyList(), BigDecimal.valueOf(6350))
+        val t4 = PriceBatch(4, 5, Collections.emptyList(), BigDecimal.valueOf(6320))
+        val t5 = PriceBatch(5, 5, Collections.emptyList(), BigDecimal.valueOf(6275))
+        val t6 = PriceBatch(6, 5, Collections.emptyList(), BigDecimal.valueOf(6200))
+        val t7 = PriceBatch(7, 5, Collections.emptyList(), BigDecimal.valueOf(6175))
+        val t8 = PriceBatch(8, 5, Collections.emptyList(), BigDecimal.valueOf(6125))
+        val t9 = PriceBatch(9, 5, Collections.emptyList(), BigDecimal.valueOf(6175))
+        val t10 = PriceBatch(10, 5, Collections.emptyList(), BigDecimal.valueOf(6150))
+        val t11 = PriceBatch(11, 5, Collections.emptyList(), BigDecimal.valueOf(6175))
+        val t12 = PriceBatch(12, 5, Collections.emptyList(), BigDecimal.valueOf(6175))
+        val t13 = PriceBatch(13, 5, Collections.emptyList(), BigDecimal.valueOf(6150))
+        val t14 = PriceBatch(14, 5, Collections.emptyList(), BigDecimal.valueOf(6125))
+        val t15 = PriceBatch(15, 5, Collections.emptyList(), BigDecimal.valueOf(6110))
+        val t16 = PriceBatch(16, 5, Collections.emptyList(), BigDecimal.valueOf(6100))
+        val t17 = PriceBatch(17, 5, Collections.emptyList(), BigDecimal.valueOf(6075))
+        val t18 = PriceBatch(18, 5, Collections.emptyList(), BigDecimal.valueOf(6060))
+        val t19 = PriceBatch(19, 5, Collections.emptyList(), BigDecimal.valueOf(6075))
+
+        top5.add(t15)
+        top5.add(t16)
+        top5.add(t17)
+        top5.add(t18)
+        top5.add(t19)
+
+        top10.add(t10)
+        top10.add(t11)
+        top10.add(t12)
+        top10.add(t13)
+        top10.add(t14)
+        top10.add(t15)
+        top10.add(t16)
+        top10.add(t17)
+        top10.add(t18)
+        top10.add(t19)
+
+        top20.add(t0)
+        top20.add(t1)
+        top20.add(t2)
+        top20.add(t3)
+        top20.add(t4)
+        top20.add(t5)
+        top20.add(t6)
+        top20.add(t7)
+        top20.add(t8)
+        top20.add(t9)
+        top20.add(t10)
+        top20.add(t11)
+        top20.add(t12)
+        top20.add(t13)
+        top20.add(t14)
+        top20.add(t15)
+        top20.add(t16)
+        top20.add(t17)
+        top20.add(t18)
+        top20.add(t19)
 
         assertFalse(testee.shortBuyPrediction(top5))
+        assertFalse(testee.mediumBuyPrediction(top10))
+        assertFalse(testee.longBuyPrediction(top20))
+
     }
-
-    @Test
-    fun `shortBuyPrediction returns BUY for price drop`() {
-
-        var top5 = ArrayList<PriceBatch>()
-
-        val t0 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(6000))
-        val t1 = PriceBatch(1, 5, Collections.emptyList(), BigDecimal.valueOf(5950))
-        val t2 = PriceBatch(2, 5, Collections.emptyList(), BigDecimal.valueOf(5900))
-        val t3 = PriceBatch(3, 5, Collections.emptyList(), BigDecimal.valueOf(5850))
-        val t4 = PriceBatch(4, 5, Collections.emptyList(), BigDecimal.valueOf(5800))
-
-        top5.add(t0)
-        top5.add(t1)
-        top5.add(t2)
-        top5.add(t3)
-        top5.add(t4)
-        assertEquals(5, top5.size)
-
-        assertTrue(testee.shortBuyPrediction(top5))
-    }
-
-    @Test
-    fun `shortBuyPrediction returns BUY for price raise`() {
-
-        var top5 = ArrayList<PriceBatch>()
-
-        val t0 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5800))
-        val t1 = PriceBatch(1, 5, Collections.emptyList(), BigDecimal.valueOf(5950))
-        val t2 = PriceBatch(2, 5, Collections.emptyList(), BigDecimal.valueOf(5900))
-        val t3 = PriceBatch(3, 5, Collections.emptyList(), BigDecimal.valueOf(5850))
-        val t4 = PriceBatch(4, 5, Collections.emptyList(), BigDecimal.valueOf(6000))
-
-        top5.add(t0)
-        top5.add(t1)
-        top5.add(t2)
-        top5.add(t3)
-        top5.add(t4)
-        assertEquals(5, top5.size)
-
-        assertTrue(testee.shortBuyPrediction(top5))
-    }
-
-    @Test
-    fun `mediumBuyPrediction returns DONT BUY while flatline`() {
-
-        var top5 = ArrayList<PriceBatch>()
-
-        val t0 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(6000))
-        val t1 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5980))
-        val t2 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5960))
-        val t3 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5920))
-        val t4 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5900))
-
-        top5.add(t0)
-        top5.add(t1)
-        top5.add(t2)
-        top5.add(t3)
-        top5.add(t4)
-        assertEquals(5, top5.size)
-
-        assertFalse(testee.mediumBuyPrediction(top5))
-    }
-
-    @Test
-    fun `mediumBuyPrediction returns BUY for price drop`() {
-
-        var top5 = ArrayList<PriceBatch>()
-
-        val t0 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(6000))
-        val t1 = PriceBatch(1, 5, Collections.emptyList(), BigDecimal.valueOf(5950))
-        val t2 = PriceBatch(2, 5, Collections.emptyList(), BigDecimal.valueOf(5900))
-        val t3 = PriceBatch(3, 5, Collections.emptyList(), BigDecimal.valueOf(5800))
-        val t4 = PriceBatch(4, 5, Collections.emptyList(), BigDecimal.valueOf(5750))
-
-        top5.add(t0)
-        top5.add(t1)
-        top5.add(t2)
-        top5.add(t3)
-        top5.add(t4)
-        assertEquals(5, top5.size)
-
-        assertTrue(testee.mediumBuyPrediction(top5))
-    }
-
-    @Test
-    fun `mediumBuyPrediction returns BUY for price raise`() {
-
-        var top5 = ArrayList<PriceBatch>()
-
-        val t0 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5800))
-        val t1 = PriceBatch(1, 5, Collections.emptyList(), BigDecimal.valueOf(5850))
-        val t2 = PriceBatch(2, 5, Collections.emptyList(), BigDecimal.valueOf(5875))
-        val t3 = PriceBatch(3, 5, Collections.emptyList(), BigDecimal.valueOf(5920))
-        val t4 = PriceBatch(4, 5, Collections.emptyList(), BigDecimal.valueOf(5951))
-
-        top5.add(t0)
-        top5.add(t1)
-        top5.add(t2)
-        top5.add(t3)
-        top5.add(t4)
-        assertEquals(5, top5.size)
-
-        assertTrue(testee.mediumBuyPrediction(top5))
-    }
-
-    @Test
-    fun `longBuyPrediction returns DONT BUY while flatline`() {
-
-        var top10 = ArrayList<PriceBatch>()
-
-        val t0 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5800))
-        val t1 = PriceBatch(1, 5, Collections.emptyList(), BigDecimal.valueOf(5850))
-        val t2 = PriceBatch(2, 5, Collections.emptyList(), BigDecimal.valueOf(5875))
-        val t3 = PriceBatch(3, 5, Collections.emptyList(), BigDecimal.valueOf(5920))
-        val t4 = PriceBatch(4, 5, Collections.emptyList(), BigDecimal.valueOf(5951))
-        val t5 = PriceBatch(5, 5, Collections.emptyList(), BigDecimal.valueOf(5920))
-        val t6 = PriceBatch(6, 5, Collections.emptyList(), BigDecimal.valueOf(5875))
-        val t7 = PriceBatch(7, 5, Collections.emptyList(), BigDecimal.valueOf(5850))
-        val t8 = PriceBatch(8, 5, Collections.emptyList(), BigDecimal.valueOf(5900))
-        val t9 = PriceBatch(9, 5, Collections.emptyList(), BigDecimal.valueOf(5875))
-
-        top10.add(t0)
-        top10.add(t1)
-        top10.add(t2)
-        top10.add(t3)
-        top10.add(t4)
-        top10.add(t5)
-        top10.add(t6)
-        top10.add(t7)
-        top10.add(t8)
-        top10.add(t9)
-        assertEquals(10, top10.size)
-
-        assertFalse(testee.longBuyPrediction(top10))
-    }
-
-    @Test
-    fun `longBuyPrediction returns BUY for price drop`() {
-
-        //TODO Rethink this test case. May need to be replaced with long analysis instead of fixed value
-
-        var top10 = ArrayList<PriceBatch>()
-
-        val t0 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5800))
-        val t1 = PriceBatch(1, 5, Collections.emptyList(), BigDecimal.valueOf(5850))
-        val t2 = PriceBatch(2, 5, Collections.emptyList(), BigDecimal.valueOf(5875))
-        val t3 = PriceBatch(3, 5, Collections.emptyList(), BigDecimal.valueOf(5920))
-        val t4 = PriceBatch(4, 5, Collections.emptyList(), BigDecimal.valueOf(5951))
-        val t5 = PriceBatch(5, 5, Collections.emptyList(), BigDecimal.valueOf(6001))
-        val t6 = PriceBatch(6, 5, Collections.emptyList(), BigDecimal.valueOf(6141))
-        val t7 = PriceBatch(7, 5, Collections.emptyList(), BigDecimal.valueOf(6100))
-        val t8 = PriceBatch(8, 5, Collections.emptyList(), BigDecimal.valueOf(6125))
-        val t9 = PriceBatch(9, 5, Collections.emptyList(), BigDecimal.valueOf(6175))
-
-        top10.add(t0)
-        top10.add(t1)
-        top10.add(t2)
-        top10.add(t3)
-        top10.add(t4)
-        top10.add(t5)
-        top10.add(t6)
-        top10.add(t7)
-        top10.add(t8)
-        top10.add(t9)
-        assertEquals(10, top10.size)
-
-        assertTrue(testee.longBuyPrediction(top10))
-    }
-
-    @Test
-    fun `longBuyPrediction returns BUY for price raise`() {
-
-        var top10 = ArrayList<PriceBatch>()
-
-        val t0 = PriceBatch(0, 5, Collections.emptyList(), BigDecimal.valueOf(5800))
-        val t1 = PriceBatch(1, 5, Collections.emptyList(), BigDecimal.valueOf(5850))
-        val t2 = PriceBatch(2, 5, Collections.emptyList(), BigDecimal.valueOf(5875))
-        val t3 = PriceBatch(3, 5, Collections.emptyList(), BigDecimal.valueOf(5920))
-        val t4 = PriceBatch(4, 5, Collections.emptyList(), BigDecimal.valueOf(5951))
-        val t5 = PriceBatch(5, 5, Collections.emptyList(), BigDecimal.valueOf(6001))
-        val t6 = PriceBatch(6, 5, Collections.emptyList(), BigDecimal.valueOf(6141))
-        val t7 = PriceBatch(7, 5, Collections.emptyList(), BigDecimal.valueOf(6100))
-        val t8 = PriceBatch(8, 5, Collections.emptyList(), BigDecimal.valueOf(6125))
-        val t9 = PriceBatch(9, 5, Collections.emptyList(), BigDecimal.valueOf(6175))
-
-        top10.add(t0)
-        top10.add(t1)
-        top10.add(t2)
-        top10.add(t3)
-        top10.add(t4)
-        top10.add(t5)
-        top10.add(t6)
-        top10.add(t7)
-        top10.add(t8)
-        top10.add(t9)
-        assertEquals(10, top10.size)
-
-        assertTrue(testee.longBuyPrediction(top10))
-    }
-
 
 }

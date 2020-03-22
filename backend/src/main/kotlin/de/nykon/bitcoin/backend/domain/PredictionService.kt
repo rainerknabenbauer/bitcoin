@@ -5,6 +5,8 @@ import de.nykon.bitcoin.backend.repository.value.PriceBatch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.stream.Collectors
 
 
@@ -62,7 +64,7 @@ class PredictionService(
         val end = top5.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
         val threshold = fixedLimits.getBuyShort()
 
-        val averageDiff = end.average.minus(start.average).abs()
+        val averageDiff = end.average.minus(start.average)
 
         if (averageDiff > threshold) {
             log.info("BUY SHORT because price has risen by $averageDiff with threshold $threshold")
@@ -83,7 +85,7 @@ class PredictionService(
         val end = top10.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
         val threshold = fixedLimits.getBuyMedium()
 
-        val averageDiff = end.average.minus(start.average).abs()
+        val averageDiff = end.average.minus(start.average)
 
         if (averageDiff > threshold) {
             log.info("BUY MEDIUM because price has risen by $averageDiff with threshold $threshold")
@@ -100,18 +102,26 @@ class PredictionService(
      */
     fun longBuyPrediction(top20: List<PriceBatch>): Boolean {
 
-        val start = top20.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
+        // Accumulate average over all data points
+        // Decline if tendency is negative
+
+        var accumulated = BigDecimal.ZERO
+        top20.forEach { batch -> accumulated = accumulated.add(batch.average) }
+
         val end = top20.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
 
-        val averageDiff = end.average.minus(start.average).abs()
+        val average = accumulated.divide(BigDecimal.valueOf(top20.size.toDouble())).setScale(2, RoundingMode.HALF_UP)
 
-        val threshold = fixedLimits.getBuyLong()
-        if (averageDiff > threshold) {
-            log.info("BUY LONG because price has risen by $averageDiff with threshold $threshold")
+        val averageDiff = end.average.minus(average)
+        val stepsize = averageDiff.divide(BigDecimal.valueOf(top20.size.toDouble())).setScale(2, RoundingMode.HALF_UP)
+
+        val threshold = fixedLimits.getBuyStepsize()
+        if (stepsize > threshold) {
+            log.info("BUY LONG because price has risen each step by $stepsize with step size $threshold")
             return true;
         }
 
-        log.info("dont buy long because price has risen by $averageDiff with threshold $threshold")
+        log.info("dont buy long because price flattened with step size $stepsize and threshold at $threshold")
 
         return false;
     }
@@ -125,9 +135,9 @@ class PredictionService(
         val end = top5.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
         val threshold = fixedLimits.getSellShort()
 
-        val averageDiff = start.average.minus(end.average)
+        val averageDiff = end.average.minus(start.average)
 
-        if (averageDiff > threshold) {
+        if (averageDiff < threshold) {
             log.info("SELL SHORT because price has declined by $averageDiff with threshold $threshold")
             return true;
         }
@@ -146,9 +156,9 @@ class PredictionService(
         val end = top10.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
         val threshold = fixedLimits.getSellMedium()
 
-        val averageDiff = start.average.minus(end.average)
+        val averageDiff = end.average.minus(start.average)
 
-        if (averageDiff > threshold) {
+        if (averageDiff < threshold) {
             log.info("SELL MEDIUM because price has declined by $averageDiff with threshold $threshold")
             return true;
         }
@@ -163,18 +173,23 @@ class PredictionService(
      */
     fun longSellPrediction(top20: List<PriceBatch>): Boolean {
 
-        val start = top20.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
+        var accumulated = BigDecimal.ZERO
+        top20.forEach { batch -> accumulated = accumulated.add(batch.average) }
+
         val end = top20.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
-        val threshold = fixedLimits.getSellLong()
 
-        val averageDiff = start.average.minus(end.average)
+        val average = accumulated.divide(BigDecimal.valueOf(top20.size.toDouble())).setScale(2, RoundingMode.HALF_UP)
 
-        if (averageDiff > threshold) {
-            log.info("SELL LONG because price has declined by $averageDiff with threshold $threshold")
+        val averageDiff = end.average.minus(average)
+        val stepsize = averageDiff.divide(BigDecimal.valueOf(top20.size.toDouble())).setScale(2, RoundingMode.HALF_UP)
+
+        val threshold = fixedLimits.getSellStepsize()
+        if (stepsize < threshold) {
+            log.info("SELL LONG because price has declined each step by $stepsize with step size $threshold")
             return true;
         }
 
-        log.info("dont sell long because price has risen by $averageDiff with threshold $threshold")
+        log.info("dont SELL long because price flattened with step size $stepsize with threshold at $threshold")
 
         return false;
     }
