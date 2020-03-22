@@ -18,5 +18,10 @@ open class DecisionController(
         return predictionService.getBuyDecision()
     }
 
+    @GetMapping("/sell")
+    fun getSellDecision(): Boolean {
+        return predictionService.getSellDecision()
+    }
+
 
 }

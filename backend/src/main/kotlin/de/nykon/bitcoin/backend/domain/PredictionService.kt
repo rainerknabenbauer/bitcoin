@@ -34,19 +34,42 @@ class PredictionService(
     }
 
     /**
+     * Sells all available coins once price drop is registered.
+     *
+     * verb - used in conversation to stop someone from talking or to end oneselfs bad story.
+     * - Urban Dictionary
+     */
+    fun getSellDecision(): Boolean {
+
+        val top5 = repository.findTop5ByOrderByTimestampDesc()
+        shortSellPrediction(top5)
+
+        val top10 = repository.findTop10ByOrderByTimestampDesc()
+        mediumSellPrediction(top10)
+
+        val top20 = repository.findTop20ByOrderByTimestampDesc()
+        longSellPrediction(top20)
+
+        return shortBuyPrediction(top5) && mediumBuyPrediction(top10) && longBuyPrediction(top20)
+    }
+
+    /**
      * Takes the minimum amount (shortest time box) of data to predict price development.
      */
     fun shortBuyPrediction(top5: List<PriceBatch>): Boolean {
 
         val start = top5.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
         val end = top5.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
+        val threshold = fixedLimits.getBuyShort()
 
         val averageDiff = end.average.minus(start.average).abs()
 
-        if (averageDiff > fixedLimits.getBuyShort()) {
-            log.info("BUY because price has risen by $averageDiff")
+        if (averageDiff > threshold) {
+            log.info("BUY SHORT because price has risen by $averageDiff with threshold $threshold")
             return true;
         }
+
+        log.info("dont buy short because price has risen by $averageDiff  with threshold $threshold")
 
         return false;
     }
@@ -56,7 +79,20 @@ class PredictionService(
      */
     fun mediumBuyPrediction(top10: List<PriceBatch>): Boolean {
 
-        return compute(top10)
+        val start = top10.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
+        val end = top10.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
+        val threshold = fixedLimits.getBuyMedium()
+
+        val averageDiff = end.average.minus(start.average).abs()
+
+        if (averageDiff > threshold) {
+            log.info("BUY MEDIUM because price has risen by $averageDiff with threshold $threshold")
+            return true;
+        }
+
+        log.info("dont buy medium because price has risen by $averageDiff with threshold $threshold")
+
+        return false;
     }
 
     /**
@@ -64,7 +100,20 @@ class PredictionService(
      */
     fun longBuyPrediction(top20: List<PriceBatch>): Boolean {
 
-        return compute(top20)
+        val start = top20.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
+        val end = top20.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
+
+        val averageDiff = end.average.minus(start.average).abs()
+
+        val threshold = fixedLimits.getBuyLong()
+        if (averageDiff > threshold) {
+            log.info("BUY LONG because price has risen by $averageDiff with threshold $threshold")
+            return true;
+        }
+
+        log.info("dont buy long because price has risen by $averageDiff with threshold $threshold")
+
+        return false;
     }
 
     /**
@@ -74,27 +123,60 @@ class PredictionService(
 
         val start = top5.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
         val end = top5.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
+        val threshold = fixedLimits.getSellShort()
 
         val averageDiff = start.average.minus(end.average)
 
-        if (averageDiff > fixedLimits.getBuyShort()) {
-            log.info("BUY because price has declined by $averageDiff")
+        if (averageDiff > threshold) {
+            log.info("SELL SHORT because price has declined by $averageDiff with threshold $threshold")
             return true;
         }
+
+        log.info("dont sell short because price has risen by $averageDiff with threshold $threshold")
 
         return false;
     }
 
     /**
-     * Sells all available coins once price drop is registered.
-     *
-     * verb - used in conversation to stop someone from talking or to end oneselfs bad story.
-     * - Urban Dictionary
+     * Takes the medium amount (shortest time box) of data to predict price development.
      */
-    fun bail() {
+    fun mediumSellPrediction(top10: List<PriceBatch>): Boolean {
 
-        //TODO once long term drops x trigger sale
+        val start = top10.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
+        val end = top10.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
+        val threshold = fixedLimits.getSellMedium()
 
+        val averageDiff = start.average.minus(end.average)
+
+        if (averageDiff > threshold) {
+            log.info("SELL MEDIUM because price has declined by $averageDiff with threshold $threshold")
+            return true;
+        }
+
+        log.info("dont sell medium because price has risen by $averageDiff with threshold $threshold")
+
+        return false;
+    }
+
+    /**
+     * Takes the long amount (shortest time box) of data to predict price development.
+     */
+    fun longSellPrediction(top20: List<PriceBatch>): Boolean {
+
+        val start = top20.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
+        val end = top20.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
+        val threshold = fixedLimits.getSellLong()
+
+        val averageDiff = start.average.minus(end.average)
+
+        if (averageDiff > threshold) {
+            log.info("SELL LONG because price has declined by $averageDiff with threshold $threshold")
+            return true;
+        }
+
+        log.info("dont sell long because price has risen by $averageDiff with threshold $threshold")
+
+        return false;
     }
 
     /**
@@ -102,25 +184,6 @@ class PredictionService(
      */
     fun supplyAndDemandPrediction() {
         TODO("Not yet implemented")
-    }
-
-
-    /**
-     *
-     */
-    private fun compute(batch: List<PriceBatch>): Boolean {
-
-        val start = batch.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
-        val end = batch.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
-
-        val averageDiff = start.average.minus(end.average)
-
-        if (averageDiff > fixedLimits.getBuyShort()) {
-            log.info("BUY because price has declined by $averageDiff")
-            return true;
-        }
-
-        return false;
     }
 
     /**
