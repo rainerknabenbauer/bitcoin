@@ -16,7 +16,7 @@ class OffersService {
 
     fun storePrice(ordersRoot: OrdersRoot, cycleInSeconds: Int) {
         val priceBatch = priceProcessor.process(ordersRoot, cycleInSeconds)!!
-        bitcoinRepository.save(priceBatch).subscribe()
+        bitcoinRepository.save(priceBatch)
     }
 
 

@@ -1,26 +1,21 @@
 package de.nykon.bitcoin.backend.repository
 
-import com.mongodb.reactivestreams.client.MongoClients
-import de.nykon.bitcoin.backend.repository.BitcoinRepository
-import org.springframework.context.annotation.Bean
+import com.mongodb.MongoClient
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration
-import org.springframework.data.mongodb.core.ReactiveMongoTemplate
-import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories
+import org.springframework.data.mongodb.config.AbstractMongoConfiguration
+
 
 @Configuration
-@EnableReactiveMongoRepositories(
-        basePackageClasses = [BitcoinRepository::class])
-open class MongoConfig : AbstractReactiveMongoConfiguration() {
+open class MongoConfig : AbstractMongoConfiguration() {
+    override fun getDatabaseName(): String {
+        return "bitcoin"
+    }
 
-    override fun getDatabaseName() = "bitcoin"
+    override fun mongoClient(): MongoClient {
+        return MongoClient("127.0.0.1", 27017)
+    }
 
-    override fun reactiveMongoClient() = mongoClient()
-
-    @Bean
-    open fun mongoClient() = MongoClients.create()
-
-    @Bean
-    override fun reactiveMongoTemplate()
-            = ReactiveMongoTemplate(mongoClient(), databaseName)
+    override fun getMappingBasePackage(): String {
+        return "de.nykon.bitcoin"
+    }
 }

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.lang.NonNull
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 class OffersController {
@@ -16,20 +17,17 @@ class OffersController {
     @Autowired
     lateinit var offersService: OffersService
 
-    @GetMapping(path = ["/offers"])
-    fun saveOffers(): String {
-
-        return "hello world"
-    }
-
     @PostMapping(path = ["/offers"], produces= ["application/json"])
-    fun saveOffers(@RequestHeader("cycle-in-ms") @NonNull cycleInMs: Long,
+    fun saveOffers(@RequestHeader("cycle-in-ms") cycleInMs: Long,
                    @RequestBody @NonNull ordersRoot: OrdersRoot) {
 
         val size = ordersRoot.orders!!.size
         log.info("Received $size orders.")
 
-        val cycleInSeconds: Int = cycleInMs.div(60000).toInt()
+        var cycleInSeconds: Int = 0
+        if (Objects.nonNull(cycleInMs)) {
+            cycleInSeconds = cycleInMs.div(60000).toInt()
+        }
 
         offersService.storePrice(ordersRoot, cycleInSeconds)
     }

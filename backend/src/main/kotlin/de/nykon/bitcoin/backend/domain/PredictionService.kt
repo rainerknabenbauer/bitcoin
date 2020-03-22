@@ -110,10 +110,10 @@ class PredictionService(
 
         val end = top20.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
 
-        val average = accumulated.divide(BigDecimal.valueOf(top20.size.toDouble())).setScale(2, RoundingMode.HALF_UP)
+        val average = accumulated.divide(BigDecimal.valueOf(top20.size.toDouble()), 2, RoundingMode.HALF_UP)
 
-        val averageDiff = end.average.minus(average)
-        val stepsize = averageDiff.divide(BigDecimal.valueOf(top20.size.toDouble())).setScale(2, RoundingMode.HALF_UP)
+        val averageDiff = end.average.minus(average).setScale(2, RoundingMode.HALF_UP)
+        val stepsize = averageDiff.divide(BigDecimal.valueOf(top20.size.toDouble()), 2, RoundingMode.HALF_UP)
 
         val threshold = fixedLimits.getBuyStepsize()
         if (stepsize > threshold) {
@@ -178,10 +178,10 @@ class PredictionService(
 
         val end = top20.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
 
-        val average = accumulated.divide(BigDecimal.valueOf(top20.size.toDouble())).setScale(2, RoundingMode.HALF_UP)
+        val average = accumulated.divide(BigDecimal.valueOf(top20.size.toDouble()), 2, RoundingMode.HALF_UP)
 
         val averageDiff = end.average.minus(average)
-        val stepsize = averageDiff.divide(BigDecimal.valueOf(top20.size.toDouble())).setScale(2, RoundingMode.HALF_UP)
+        val stepsize = averageDiff.divide(BigDecimal.valueOf(top20.size.toDouble()), 2, RoundingMode.HALF_UP)
 
         val threshold = fixedLimits.getSellStepsize()
         if (stepsize < threshold) {
