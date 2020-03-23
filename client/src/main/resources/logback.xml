@@ -16,7 +16,7 @@
     </encoder>
   </appender>
   <appender name="RollingFile-Appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>./client-bitcoinID-rollingfile.log</file>
+    <file>./client-bitcoinDE.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <fileNamePattern>./log/rollingfile.log%d{yyyy-MM-dd}.log</fileNamePattern>
       <maxHistory>30</maxHistory>
