@@ -8,7 +8,7 @@ import okhttp3.RequestBody
 
 class BackendClient {
 
-    fun persist(json: String, cycleInMilliseconds: Long) {
+    fun persist(json: String) {
 
         val uri = "http://localhost:8888/offers"
 
@@ -18,7 +18,6 @@ class BackendClient {
 
         val request: Request = Request.Builder()
                 .url(uri)
-                .addHeader("cycle-in-ms", cycleInMilliseconds.toString())
                 .post(body)
                 .build()
 

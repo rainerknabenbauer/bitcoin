@@ -15,7 +15,7 @@ class PriceProcessor {
 
     private val log: Logger = LoggerFactory.getLogger(PriceProcessor::class.java)
 
-    fun process(ordersRoot: OrdersRoot, cycleInMs: Int): PriceBatch? {
+    fun process(ordersRoot: OrdersRoot): PriceBatch? {
 
         val orders = ordersRoot.orders
         val offers = ArrayList<Offer>()
@@ -39,7 +39,7 @@ class PriceProcessor {
             log.error("Received 0 orders from bitcoin.de")
         }
 
-        return PriceBatch(System.currentTimeMillis(), cycleInMs, offers, averagePrice)
+        return PriceBatch(System.currentTimeMillis(), 5, offers, averagePrice)
     }
 
 }

@@ -18,18 +18,12 @@ class OffersController {
     lateinit var offersService: OffersService
 
     @PostMapping(path = ["/offers"], produces= ["application/json"])
-    fun saveOffers(@RequestHeader("cycle-in-ms") cycleInMs: Long,
-                   @RequestBody @NonNull ordersRoot: OrdersRoot) {
+    fun saveOffers(@RequestBody @NonNull ordersRoot: OrdersRoot) {
 
         val size = ordersRoot.orders!!.size
         log.info("Received $size orders.")
 
-        var cycleInSeconds: Int = 0
-        if (Objects.nonNull(cycleInMs)) {
-            cycleInSeconds = cycleInMs.div(60000).toInt()
-        }
-
-        offersService.storePrice(ordersRoot, cycleInSeconds)
+        offersService.storePrice(ordersRoot)
     }
 
 }
