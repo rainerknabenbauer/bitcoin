@@ -1,10 +1,5 @@
-spring:
-  profiles:
-    active: development
-
 server:
   port: 8888
-
 
 limits:
   relative:
@@ -27,22 +22,9 @@ limits:
       medium: -70
       long: -150
       stepsize: 0
----
+
 spring:
-  profiles: development
   data:
     mongodb:
       uri: mongodb://127.0.0.1:27017
       database: bitcoin
-
-
----
-spring:
-  profiles: production
-  data:
-    mongodb:
-      uri: mongodb://127.0.0.1:27017
-      database: bitcoin
-
-server:
-  port: 80

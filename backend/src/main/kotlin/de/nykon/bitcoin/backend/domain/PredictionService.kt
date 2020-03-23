@@ -24,15 +24,15 @@ class PredictionService(
     fun getBuyDecision(): Boolean {
 
         val top5 = repository.findTop5ByOrderByTimestampDesc()
-        shortBuyPrediction(top5)
+        val shortBuyPrediction = shortBuyPrediction(top5)
 
         val top10 = repository.findTop10ByOrderByTimestampDesc()
-        mediumBuyPrediction(top10)
+        val mediumBuyPrediction = mediumBuyPrediction(top10)
 
         val top20 = repository.findTop20ByOrderByTimestampDesc()
-        longBuyPrediction(top20)
+        val longBuyPrediction = longBuyPrediction(top20)
 
-        return shortBuyPrediction(top5) && mediumBuyPrediction(top10) && longBuyPrediction(top20)
+        return shortBuyPrediction && mediumBuyPrediction && longBuyPrediction
     }
 
     /**
@@ -44,15 +44,15 @@ class PredictionService(
     fun getSellDecision(): Boolean {
 
         val top5 = repository.findTop5ByOrderByTimestampDesc()
-        shortSellPrediction(top5)
+        val shortSellPrediction = shortSellPrediction(top5)
 
         val top10 = repository.findTop10ByOrderByTimestampDesc()
-        mediumSellPrediction(top10)
+        val mediumSellPrediction = mediumSellPrediction(top10)
 
         val top20 = repository.findTop20ByOrderByTimestampDesc()
-        longSellPrediction(top20)
+        val longSellPrediction = longSellPrediction(top20)
 
-        return shortBuyPrediction(top5) && mediumBuyPrediction(top10) && longBuyPrediction(top20)
+        return shortSellPrediction && mediumSellPrediction && longSellPrediction
     }
 
     /**
@@ -67,11 +67,11 @@ class PredictionService(
         val averageDiff = end.average.minus(start.average)
 
         if (averageDiff > threshold) {
-            log.info("BUY SHORT because price has risen by $averageDiff with threshold $threshold")
+            log.info("[YES][BUY_][SHORT_] because price has risen by $averageDiff with threshold $threshold")
             return true;
         }
 
-        log.info("dont buy short because price has risen by $averageDiff  with threshold $threshold")
+        log.info("[NO_][BUY_][SHORT_] because price has risen by $averageDiff  with threshold $threshold")
 
         return false;
     }
@@ -88,11 +88,11 @@ class PredictionService(
         val averageDiff = end.average.minus(start.average)
 
         if (averageDiff > threshold) {
-            log.info("BUY MEDIUM because price has risen by $averageDiff with threshold $threshold")
+            log.info("[YES][BUY_][MEDIUM] because price has risen by $averageDiff with threshold $threshold")
             return true;
         }
 
-        log.info("dont buy medium because price has risen by $averageDiff with threshold $threshold")
+        log.info("[NO_][BUY_][MEDIUM] because price has risen by $averageDiff with threshold $threshold")
 
         return false;
     }
@@ -117,11 +117,11 @@ class PredictionService(
 
         val threshold = fixedLimits.getBuyStepsize()
         if (stepsize > threshold) {
-            log.info("BUY LONG because price has risen each step by $stepsize with step size $threshold")
+            log.info("[YES][BUY_][LONG__] because price has risen each step by $stepsize with step size $threshold")
             return true;
         }
 
-        log.info("dont buy long because price flattened with step size $stepsize and threshold at $threshold")
+        log.info("[NO_][BUY_][LONG__] because price flattened with step size $stepsize and threshold at $threshold")
 
         return false;
     }
@@ -138,11 +138,11 @@ class PredictionService(
         val averageDiff = end.average.minus(start.average)
 
         if (averageDiff < threshold) {
-            log.info("SELL SHORT because price has declined by $averageDiff with threshold $threshold")
+            log.info("[YES][SELL][SHORT_] because price has declined by $averageDiff with threshold $threshold")
             return true;
         }
 
-        log.info("dont sell short because price has risen by $averageDiff with threshold $threshold")
+        log.info("[NO_][SELL][SHORT_] because price has risen by $averageDiff with threshold $threshold")
 
         return false;
     }
@@ -159,11 +159,11 @@ class PredictionService(
         val averageDiff = end.average.minus(start.average)
 
         if (averageDiff < threshold) {
-            log.info("SELL MEDIUM because price has declined by $averageDiff with threshold $threshold")
+            log.info("[YES][SELL][MEDIUM] because price has declined by $averageDiff with threshold $threshold")
             return true;
         }
 
-        log.info("dont sell medium because price has risen by $averageDiff with threshold $threshold")
+        log.info("[NO_][SELL][MEDIUM] because price has risen by $averageDiff with threshold $threshold")
 
         return false;
     }
@@ -185,11 +185,11 @@ class PredictionService(
 
         val threshold = fixedLimits.getSellStepsize()
         if (stepsize < threshold) {
-            log.info("SELL LONG because price has declined each step by $stepsize with step size $threshold")
+            log.info("[YES][SELL][LONG__] because price has declined each step by $stepsize with step size $threshold")
             return true;
         }
 
-        log.info("dont SELL long because price flattened with step size $stepsize with threshold at $threshold")
+        log.info("[NO_][SELL][LONG__] because price flattened with step size $stepsize with threshold at $threshold")
 
         return false;
     }

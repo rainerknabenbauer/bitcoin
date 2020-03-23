@@ -32,3 +32,5 @@ build/
 
 ### Custom ###
 credentials.yml
+*.log
+
