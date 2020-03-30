@@ -2,9 +2,15 @@ package de.nykon.bitcoin.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.nykon.bitcoin.client.value.OrdersRoot
+import okhttp3.Call
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
+import java.io.File
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -17,13 +23,57 @@ internal class ClientApplicationKtTest {
 
     var cryptoClient = CryptoClient()
 
+    @Test
+    fun `POST btceur SELL trade`() {
+
+        val filename = "json/executeTrade_SELL.json"
+        val json = ClientApplication::class.java.getResource("/json/executeTrade_SELL.json").readText()
+
+        val requestParams = "max_amount_currency_to_trade=0.1" +
+                "&min_amount_currency_to_trade=0.02" +
+                "&payment_option=3" +
+                "&price=5995" +
+                "&type=sell"
+
+        val httpMethod = "POST"
+        val basepath = "https://api.bitcoin.de/v4/btceur/orders"
+        val uriFull = "$basepath?$requestParams"
+        val apiKey = System.getenv("bitcoin.api.key")
+        val apiSecret = System.getenv("bitcoin.api.secret")
+        val nonce = System.currentTimeMillis().toString()
+        val md5Hash = cryptoClient.hashMd5(requestParams)
+
+        val hmacData = cryptoClient.getHmacData(httpMethod, uriFull, apiKey, nonce, md5Hash)
+        val hmacSignature = cryptoClient.getHmacSignature(hmacData, apiSecret)
+        val client = OkHttpClient()
+
+        val body: RequestBody = RequestBody.create(
+                "application/json".toMediaType(), json)
+
+        val request: Request = Request.Builder()
+                .url(uriFull)
+                .header("X-API-KEY", apiKey)
+                .header("X-API-NONCE", nonce)
+                .header("X-API-SIGNATURE", hmacSignature)
+                .post(body)
+                .build()
+
+        val call: Call = client.newCall(request)
+        val receive = call.execute()
+
+        println(uriFull)
+        println(receive.headers)
+        println(receive.body.toString())
+    }
+
+
     fun `GET btceur order book on bitcoin_de`() {
 
         val httpMethod = "GET"
-        val uriString = "https://api.bitcoin.de/v4/btceur/orderbook"
+        val basepath = "https://api.bitcoin.de/v4/btceur/orderbook"
         val requestParams = "type=buy"
         val requestBody = ""
-        val uriFull = "$uriString?$requestParams"
+        val uriFull = "$basepath?$requestParams"
         val apiKey = System.getenv("bitcoin.api.key")
         val apiSecret = System.getenv("bitcoin.api.secret")
         val nonce = System.currentTimeMillis().toString()
@@ -51,16 +101,16 @@ internal class ClientApplicationKtTest {
     fun `GET orders on bitcoin_de`() {
 
         val httpMethod = "GET"
-        val uriString = "https://api.bitcoin.de/v4/orders"
+        val basepath = "https://api.bitcoin.de/v4/orders"
         val requestParams = ""
         val requestBody = ""
-        val uriFull = "$uriString"
+        val uriFull = "$basepath"
         val apiKey = System.getenv("bitcoin.api.key")
         val apiSecret = System.getenv("bitcoin.api.secret")
         val nonce = System.currentTimeMillis().toString()
         val md5Hash = cryptoClient.hashMd5(requestBody)
 
-        val hmachData = cryptoClient.getHmacData(httpMethod, uriString, apiKey, nonce, md5Hash)
+        val hmachData = cryptoClient.getHmacData(httpMethod, basepath, apiKey, nonce, md5Hash)
         val hmacSignature = cryptoClient.getHmacSignature(hmachData, apiSecret)
         val httpClient : HttpClient = HttpClient.newHttpClient()
 
