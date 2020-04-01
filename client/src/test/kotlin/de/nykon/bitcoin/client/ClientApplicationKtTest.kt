@@ -7,14 +7,16 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.jetbrains.kotlin.resolve.resolveQualifierAsReceiverInExpression
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import java.io.File
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.file.Paths
 import java.util.*
 
 
@@ -22,50 +24,6 @@ import java.util.*
 internal class ClientApplicationKtTest {
 
     var cryptoClient = CryptoClient()
-
-    @Test
-    fun `POST btceur SELL trade`() {
-
-        val filename = "json/executeTrade_SELL.json"
-        val json = ClientApplication::class.java.getResource("/json/executeTrade_SELL.json").readText()
-
-        val requestParams = "max_amount_currency_to_trade=0.1" +
-                "&min_amount_currency_to_trade=0.02" +
-                "&payment_option=3" +
-                "&price=5995" +
-                "&type=sell"
-
-        val httpMethod = "POST"
-        val basepath = "https://api.bitcoin.de/v4/btceur/orders"
-        val uriFull = "$basepath?$requestParams"
-        val apiKey = System.getenv("bitcoin.api.key")
-        val apiSecret = System.getenv("bitcoin.api.secret")
-        val nonce = System.currentTimeMillis().toString()
-        val md5Hash = cryptoClient.hashMd5(requestParams)
-
-        val hmacData = cryptoClient.getHmacData(httpMethod, uriFull, apiKey, nonce, md5Hash)
-        val hmacSignature = cryptoClient.getHmacSignature(hmacData, apiSecret)
-        val client = OkHttpClient()
-
-        val body: RequestBody = RequestBody.create(
-                "application/json".toMediaType(), json)
-
-        val request: Request = Request.Builder()
-                .url(uriFull)
-                .header("X-API-KEY", apiKey)
-                .header("X-API-NONCE", nonce)
-                .header("X-API-SIGNATURE", hmacSignature)
-                .post(body)
-                .build()
-
-        val call: Call = client.newCall(request)
-        val receive = call.execute()
-
-        println(uriFull)
-        println(receive.headers)
-        println(receive.body.toString())
-    }
-
 
     fun `GET btceur order book on bitcoin_de`() {
 

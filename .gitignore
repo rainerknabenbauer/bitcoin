@@ -34,3 +34,4 @@ build/
 credentials.yml
 *.log
 
+web/demo.php
