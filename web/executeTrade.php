@@ -1,6 +1,9 @@
 <?php
 
-if($_SERVER["REMOTE_ADDR"]=='3.121.229.90' || $_SERVER["REMOTE_ADDR"]=='95.91.237.21') {
+$server_ip = '3.121.229.90';
+$home_ip = '95.91.237.21';
+
+if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip) {
 
     $json = file_get_contents('php://input');    
     $request_body = json_decode($json);
