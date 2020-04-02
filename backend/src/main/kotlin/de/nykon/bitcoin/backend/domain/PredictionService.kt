@@ -1,7 +1,7 @@
 package de.nykon.bitcoin.backend.domain
 
 import de.nykon.bitcoin.backend.repository.BitcoinRepository
-import de.nykon.bitcoin.backend.repository.value.PriceBatch
+import de.nykon.bitcoin.backend.repository.value.SupplyBatch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -58,7 +58,7 @@ class PredictionService(
     /**
      * Takes the minimum amount (shortest time box) of data to predict price development.
      */
-    fun shortBuyPrediction(top5: List<PriceBatch>): Boolean {
+    fun shortBuyPrediction(top5: List<SupplyBatch>): Boolean {
 
         val start = top5.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
         val end = top5.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
@@ -79,7 +79,7 @@ class PredictionService(
     /**
      * Takes the medium amount (medium time box) of data to predict price development.
      */
-    fun mediumBuyPrediction(top10: List<PriceBatch>): Boolean {
+    fun mediumBuyPrediction(top10: List<SupplyBatch>): Boolean {
 
         val start = top10.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
         val end = top10.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
@@ -100,7 +100,7 @@ class PredictionService(
     /**
      * Takes the maximum amount (maximum time box) of data to predict price development.
      */
-    fun longBuyPrediction(top20: List<PriceBatch>): Boolean {
+    fun longBuyPrediction(top20: List<SupplyBatch>): Boolean {
 
         // Accumulate average over all data points
         // Decline if tendency is negative
@@ -129,7 +129,7 @@ class PredictionService(
     /**
      * Takes the minimum amount (shortest time box) of data to predict price development.
      */
-    fun shortSellPrediction(top5: List<PriceBatch>): Boolean {
+    fun shortSellPrediction(top5: List<SupplyBatch>): Boolean {
 
         val start = top5.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
         val end = top5.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
@@ -150,7 +150,7 @@ class PredictionService(
     /**
      * Takes the medium amount (shortest time box) of data to predict price development.
      */
-    fun mediumSellPrediction(top10: List<PriceBatch>): Boolean {
+    fun mediumSellPrediction(top10: List<SupplyBatch>): Boolean {
 
         val start = top10.stream().min(Comparator.comparingLong { it?.timestamp!! }).get()
         val end = top10.stream().max(Comparator.comparingLong { it?.timestamp!! }).get()
@@ -171,7 +171,7 @@ class PredictionService(
     /**
      * Takes the long amount (shortest time box) of data to predict price development.
      */
-    fun longSellPrediction(top20: List<PriceBatch>): Boolean {
+    fun longSellPrediction(top20: List<SupplyBatch>): Boolean {
 
         var accumulated = BigDecimal.ZERO
         top20.forEach { batch -> accumulated = accumulated.add(batch.average) }
@@ -204,12 +204,12 @@ class PredictionService(
     /**
      * Curve instability.
      */
-    private fun volatility(batch: List<PriceBatch?>?) {
+    private fun volatility(batches: List<SupplyBatch?>?) {
 
-        val peak = batch?.stream()?.map {
+        val peak = batches?.stream()?.map {
             batchItem -> batchItem!!.average }?.collect(Collectors.toList())?.max()!!
 
-        val valley = batch.stream().map {
+        val valley = batches.stream().map {
             batchItem -> batchItem!!.average }?.collect(Collectors.toList())?.min()!!
 
     }

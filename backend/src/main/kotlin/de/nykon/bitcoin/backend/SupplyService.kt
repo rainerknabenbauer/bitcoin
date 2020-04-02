@@ -6,16 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class OffersService {
+class SupplyService {
 
     @Autowired
-    private lateinit var priceProcessor: PriceProcessor
+    private lateinit var tradeProcessor: PriceProcessor
 
     @Autowired
     private lateinit var bitcoinRepository: BitcoinRepository
 
-    fun storePrice(ordersRoot: OrdersRoot) {
-        val priceBatch = priceProcessor.process(ordersRoot)!!
+    fun storeSupply(ordersRoot: OrdersRoot) {
+        val priceBatch = tradeProcessor.process(ordersRoot)!!
         bitcoinRepository.save(priceBatch)
     }
 

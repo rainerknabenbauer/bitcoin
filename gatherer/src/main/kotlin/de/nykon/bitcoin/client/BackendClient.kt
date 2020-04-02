@@ -8,10 +8,19 @@ import okhttp3.RequestBody
 
 class BackendClient {
 
-    fun persist(json: String) {
+    fun persistSupply(json: String) {
 
-        val uri = "http://localhost:8888/offers"
+        val uri = "http://localhost:8888/supply"
+        persist(json, uri)
+    }
 
+    fun persistDemand(json: String) {
+
+        val uri = "http://localhost:8888/demand"
+        persist(json, uri)
+    }
+
+    private fun persist(json: String, uri: String) {
         val client = OkHttpClient()
         val body: RequestBody = RequestBody.create(
                 "application/json".toMediaTypeOrNull(), json)

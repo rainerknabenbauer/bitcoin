@@ -35,3 +35,4 @@ credentials.yml
 *.log
 
 web/demo.php
+*.DS_Store

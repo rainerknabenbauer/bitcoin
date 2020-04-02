@@ -16,6 +16,8 @@
     <module>client</module>
     <module>basics</module>
     <module>backend</module>
+    <module>seller</module>
+    <module>buyer</module>
   </modules>
 
   <groupId>de.nykon.bitcoin</groupId>

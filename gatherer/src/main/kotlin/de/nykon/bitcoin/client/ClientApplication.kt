@@ -25,6 +25,6 @@ fun saveCurrentState(apiKey: String, apiSecret: String) {
 
     if (!offers.isNullOrEmpty()) {
         val backendClient = BackendClient()
-        backendClient.persist(offers)
+        backendClient.persistSupply(offers)
     }
 }
