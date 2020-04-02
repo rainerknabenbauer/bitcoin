@@ -8,31 +8,21 @@ if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip) {
     $json = file_get_contents('php://input');    
     $request_body = json_decode($json);
 
-    echo $json;
-
     $api_key    = $request_body->api_key;
     $api_secret = $request_body->api_secret;
-    $type       = $request_body->type;
-    $amount     = $request_body->amount;
-    $price      = $request_body->price;
 
-    if (!empty($api_key) && !empty($api_secret) && !empty($type) && !empty($amount) && !empty($price)) {
+    if (!empty($api_key) && !empty($api_secret)) {
 
         $trading_api_sdk = new TradingApiSdkV4($api_key, $api_secret);
 
-        $orders = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_CREATE_ORDER, [
-        TradingApiSdkV4::CREATE_ORDER_PARAMETER_TYPE                            => $type,
-        TradingApiSdkV4::CREATE_ORDER_PARAMETER_TRADING_PAIR                    => TradingApiSdkV4::TRADING_PAIR_BTCEUR,
-        TradingApiSdkV4::CREATE_ORDER_PARAMETER_MAX_AMOUNT_CURRENCY_TO_TRADE    => $amount,
-        TradingApiSdkV4::CREATE_ORDER_PARAMETER_PRICE                           => $price,
-        ]);
+        $response = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_SHOW_ACCOUNT_INFO);
+
+        echo(json_encode($response));
+
 
     } else {
         if ($api_key == null) echo "\napi key is not set";
         if ($api_secret == null) echo "\napi secret is not set";
-        if ($type == null) echo "\ntype is not set";
-        if ($amount == null) echo "\namount is not set";
-        if ($price == null) echo "\nprice is not set";
     }
 }
 

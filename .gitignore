@@ -34,5 +34,5 @@ build/
 credentials.yml
 *.log
 
-web/demo.php
+*demo.php
 *.DS_Store
