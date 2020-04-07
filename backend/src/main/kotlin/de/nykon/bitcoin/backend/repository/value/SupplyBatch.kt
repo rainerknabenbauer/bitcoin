@@ -1,6 +1,5 @@
 package de.nykon.bitcoin.backend.repository.value
 
-import de.nykon.bitcoin.client.repository.value.Trade
 import org.springframework.data.mongodb.core.mapping.Document
 import java.math.BigDecimal
 

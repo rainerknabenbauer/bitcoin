@@ -1,4 +1,6 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
-class Response {
-}
+data class Response<T>(
+        val statusCode: Int,
+        val t: T
+)

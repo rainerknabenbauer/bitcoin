@@ -1,9 +1,6 @@
 package de.nykon.bitcoin.sdk.value
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-class DeleteOrderResponse {
-    var errors: List<String>? = null
+class DeleteOrderBody {
+    var errors: List<Errors>? = null
     var credits = 0
 }

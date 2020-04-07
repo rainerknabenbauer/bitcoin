@@ -19,6 +19,7 @@
     <module>seller</module>
     <module>buyer</module>
     <module>bitcoin-de-sdk</module>
+    <module>bitcoin-de-sdk-value</module>
   </modules>
 
   <groupId>de.nykon.bitcoin</groupId>

@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.client.repository.value
+package de.nykon.bitcoin.backend.repository.value
 
 import java.math.BigDecimal
 

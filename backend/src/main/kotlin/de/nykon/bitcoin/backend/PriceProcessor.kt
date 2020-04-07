@@ -1,6 +1,6 @@
 package de.nykon.bitcoin.backend
 
-import de.nykon.bitcoin.client.repository.value.Trade
+import de.nykon.bitcoin.backend.repository.value.Trade
 import de.nykon.bitcoin.backend.repository.value.SupplyBatch
 import de.nykon.bitcoin.backend.value.OrdersRoot
 import org.slf4j.Logger
