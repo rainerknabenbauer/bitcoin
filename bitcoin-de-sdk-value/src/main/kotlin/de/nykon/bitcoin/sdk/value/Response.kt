@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.sdk.bitcoinDe
+package de.nykon.bitcoin.sdk.value
 
 data class Response<T>(
         val statusCode: Int,

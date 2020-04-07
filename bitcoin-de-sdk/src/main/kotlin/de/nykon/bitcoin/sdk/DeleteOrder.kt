@@ -1,8 +1,8 @@
 package de.nykon.bitcoin.sdk
 
-import de.nykon.bitcoin.sdk.bitcoinDe.Response
-import de.nykon.bitcoin.sdk.bitcoinDe.value.OrderId
-import de.nykon.bitcoin.sdk.value.DeleteOrderBody
+import de.nykon.bitcoin.sdk.value.Response
+import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
+import de.nykon.bitcoin.sdk.value.deleteOrder.DeleteOrderBody
 
 interface DeleteOrder : Authentication {
 

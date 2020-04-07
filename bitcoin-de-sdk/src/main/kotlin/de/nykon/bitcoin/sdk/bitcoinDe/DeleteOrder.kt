@@ -2,12 +2,12 @@ package de.nykon.bitcoin.sdk.bitcoinDe
 
 import com.google.gson.GsonBuilder
 import de.nykon.bitcoin.sdk.DeleteOrder
-import de.nykon.bitcoin.sdk.bitcoinDe.value.OrderId
-import de.nykon.bitcoin.sdk.value.DeleteOrderBody
+import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
+import de.nykon.bitcoin.sdk.value.Response
+import de.nykon.bitcoin.sdk.value.deleteOrder.DeleteOrderBody
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-
 
 data class DeleteOrder(
         override val apiKey: String,
@@ -17,6 +17,9 @@ data class DeleteOrder(
     private val uri = "https://nykon.de/bitcoin/deleteOrder.php"
     private val jsonFile = "/json/DeleteOrder.json"
 
+    /**
+     * Generates a JSON request using an order ID.
+     */
     override fun execute(orderId: OrderId): Response<DeleteOrderBody> {
 
         val json = this::class.java.getResource(jsonFile).readText(Charsets.UTF_8)
@@ -27,6 +30,11 @@ data class DeleteOrder(
         return execute(json)
     }
 
+    /**
+     * Requires a fully prepared JSON request.
+     *
+     * see _resources/json/DeleteOrder.json_
+     */
     override fun execute(json: String): Response<DeleteOrderBody> {
 
         val httpClient : HttpClient = HttpClient.newHttpClient()
@@ -42,9 +50,6 @@ data class DeleteOrder(
     }
 
     private fun convert(body: String?): DeleteOrderBody {
-
-        println(body)
-
         return GsonBuilder().create().fromJson(body, DeleteOrderBody::class.java)
     }
 }
