@@ -21,7 +21,7 @@ internal class DeleteOrderTest {
 
         // assert
         assertEquals(200, response.statusCode)
-        assertEquals(1, response.t.errors?.size)
+        assertEquals(1, response.body.errors?.size)
     }
 
 }
