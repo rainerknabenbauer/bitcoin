@@ -1,19 +1,12 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
 import com.google.gson.GsonBuilder
-import de.nykon.bitcoin.sdk.Authentication
-import de.nykon.bitcoin.sdk.Executable
-import de.nykon.bitcoin.sdk.ExecuteTrade
 import de.nykon.bitcoin.sdk.Transaction
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.TransactionType
-import de.nykon.bitcoin.sdk.value.deleteOrder.DeleteOrderBody
 import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
 import de.nykon.bitcoin.sdk.value.executeTrade.ExecuteTradeBody
 import java.math.BigDecimal
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 
 data class ExecuteTrade(
         override val apiKey: String,

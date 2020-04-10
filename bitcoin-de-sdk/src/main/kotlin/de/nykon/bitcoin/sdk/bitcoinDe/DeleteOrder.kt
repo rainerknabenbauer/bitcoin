@@ -1,15 +1,10 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
 import com.google.gson.GsonBuilder
-import de.nykon.bitcoin.sdk.Authentication
-import de.nykon.bitcoin.sdk.Executable
 import de.nykon.bitcoin.sdk.Transaction
 import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.deleteOrder.DeleteOrderBody
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 
 data class DeleteOrder(
         override val apiKey: String,

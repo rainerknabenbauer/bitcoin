@@ -16,7 +16,7 @@ internal class DeleteOrderTest {
     @Test
     fun `delete a non existing order`() {
         // arrange
-        val orderId = OrderId("fake-order-id")
+        val orderId = OrderId("89TRQ9")
 
         // act
         val response = testee.execute(orderId)

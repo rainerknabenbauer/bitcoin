@@ -1,7 +1,8 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
 import org.assertj.core.api.SoftAssertions
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class ShowOrderbookCompactTest {
@@ -20,9 +21,9 @@ internal class ShowOrderbookCompactTest {
 
         // assert
         SoftAssertions().apply {
-            Assertions.assertEquals(200, response.statusCode, "receives HTTP 200 response")
-            Assertions.assertTrue(response.body.orders.asks.isNotEmpty(), "Receive BUY offers from exchange")
-            Assertions.assertTrue(response.body.orders.bids.isNotEmpty(), "Receive SELL offers from exchange")
+            assertEquals(200, response.statusCode, "receives HTTP 200 response")
+            assertTrue(response.body.orders.asks.isNotEmpty(), "receive BUY offers from exchange")
+            assertTrue(response.body.orders.bids.isNotEmpty(), "receive SELL offers from exchange")
         }
     }
 
