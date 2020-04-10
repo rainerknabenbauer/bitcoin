@@ -15,7 +15,7 @@ if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || 1
 
         $trading_api_sdk = new TradingApiSdkV4($api_key, $api_secret);
 
-        $respone = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_SHOW_MY_ORDERS);   // ALWAYS RETURNS NULL ???
+        $response = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_SHOW_MY_ORDERS);   // ALWAYS RETURNS NULL ???
         echo(json_encode($response));
 
     } else {
