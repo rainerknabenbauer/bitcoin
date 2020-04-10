@@ -6,14 +6,13 @@ import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.TransactionType
 import de.nykon.bitcoin.sdk.value.createOrder.CreateOrderBody
 import java.math.BigDecimal
-import java.util.*
 
 class CreateOrder(
         override val apiKey: String,
         override val apiSecret: String)
     : Transaction<CreateOrderBody>() {
 
-    val tradeMinimum = BigDecimal.valueOf(60)
+    private val tradeMinimum = BigDecimal.valueOf(60)
 
     /**
      * Conveniently wraps a SELL offer in a natural language command

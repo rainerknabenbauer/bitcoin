@@ -1,22 +1,17 @@
-package de.nykon.bitcoin.backend.schedules
+package de.nykon.bitcoin.backend.trading.schedules.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class ScheduleConfiguration {
+open class SellSchedulerConfiguration {
 
-    var isActive = false
-    var amount
+    var isSellActive = false
 
     @Bean
     open fun sellConfiguration(): Boolean {
-        return isActive
+        return isSellActive
     }
-
-
-
-
 
 
 }
