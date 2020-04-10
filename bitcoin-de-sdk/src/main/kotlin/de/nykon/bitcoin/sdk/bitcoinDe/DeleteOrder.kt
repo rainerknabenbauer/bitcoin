@@ -16,9 +16,6 @@ data class DeleteOrder(
         override val apiSecret: String)
     : Transaction<DeleteOrderBody>() {
 
-    override val uri = "https://nykon.de/bitcoin/deleteOrder.php"
-    private val jsonFile = "/json/${this::class.simpleName}.json"
-
     fun execute(orderId: OrderId): Response<DeleteOrderBody> {
 
         val json = this::class.java.getResource(jsonFile).readText(Charsets.UTF_8)

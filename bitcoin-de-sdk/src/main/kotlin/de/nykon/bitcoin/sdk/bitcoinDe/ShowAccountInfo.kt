@@ -10,9 +10,6 @@ data class ShowAccountInfo(
         override val apiSecret: String)
     : Transaction<ShowAccountInfoBody>() {
 
-    override val uri = "https://nykon.de/bitcoin/showAccountInfo.php"
-    private val jsonFile = "/json/${this::class.simpleName}.json"
-
     fun execute(): Response<ShowAccountInfoBody> {
 
         val json = this::class.java.getResource(jsonFile).readText(Charsets.UTF_8)

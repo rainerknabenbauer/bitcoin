@@ -20,9 +20,6 @@ data class ExecuteTrade(
         override val apiSecret: String)
     : Transaction<ExecuteTradeBody>() {
 
-    override val uri = "https://nykon.de/bitcoin/executeTrade.php"
-    private val jsonFile = "/json/${this::class.simpleName}.json"
-
     /**
      * Conveniently wraps a SELL transaction in a natural language command
      * to make the framework more user friendly and less prone to error.

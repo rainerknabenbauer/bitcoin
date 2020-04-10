@@ -11,9 +11,6 @@ data class ShowOrderbook (
         override val apiSecret: String)
     : Transaction<ShowOrderbookBody>() {
 
-    override val uri = "https://nykon.de/bitcoin/showOrderbook.php"
-    private val jsonFile = "/json/${this::class.simpleName}.json"
-
     /**
      * Conveniently wraps the cheapest, public SELL offers in a natural language
      * command to make the framework more user friendly and less prone to error.

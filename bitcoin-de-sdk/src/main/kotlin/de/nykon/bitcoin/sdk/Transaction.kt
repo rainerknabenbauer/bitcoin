@@ -7,7 +7,9 @@ import java.net.http.HttpResponse
 
 abstract class Transaction<T> : Authentication {
 
-    abstract val uri: String
+    val uri = "https://nykon.de/bitcoin/${this::class.simpleName}.php"
+    val jsonFile = "/json/${this::class.simpleName}.json"
+
     abstract fun convert(body: String?): T
 
     fun execute(json: String): Response<T> {
