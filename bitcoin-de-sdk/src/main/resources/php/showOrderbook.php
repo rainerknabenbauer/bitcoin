@@ -4,7 +4,7 @@ $server_ip = '3.121.229.90';
 $home_ip = '95.91.237.21';
 $verify_ip = false;
 
-if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || $verify_ip) {
+if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || !$verify_ip) {
 
     $json = file_get_contents('php://input');    
     $request_body = json_decode($json);
@@ -17,7 +17,7 @@ if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || $
 
         $trading_api_sdk = new TradingApiSdkV4($api_key, $api_secret);
 
-        $respone = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_SHOW_ORDERBOOK, [
+        $response = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_SHOW_ORDERBOOK, [
 
             TradingApiSdkV4::SHOW_ORDERBOOK_PARAMETER_TRADING_PAIR                    => TradingApiSdkV4::TRADING_PAIR_BTCEUR,
             TradingApiSdkV4::SHOW_ORDERBOOK_PARAMETER_TYPE                            => $type

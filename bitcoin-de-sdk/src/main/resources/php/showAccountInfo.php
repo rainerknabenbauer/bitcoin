@@ -4,7 +4,7 @@ $server_ip = '3.121.229.90';
 $home_ip = '95.91.237.21';
 $verify_ip = false;
 
-if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || $verify_ip) {
+if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || !$verify_ip) {
 
     $json = file_get_contents('php://input');    
     $request_body = json_decode($json);
@@ -18,10 +18,7 @@ if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || $
 
         $response = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_SHOW_ACCOUNT_INFO);
 
-        var_dump($response);
-
-        //echo(json_encode($response));
-
+        echo(json_encode($response));
 
     } else {
         if ($api_key == null) echo "\napi key is not set";
