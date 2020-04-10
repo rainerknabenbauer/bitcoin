@@ -1,7 +1,7 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
 import org.assertj.core.api.SoftAssertions
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -21,7 +21,7 @@ internal class ShowAccountInfoTest {
 
         // assert
         SoftAssertions().apply {
-            Assertions.assertEquals(200, response.statusCode, "receives HTTP 200 response")
+            assertEquals(200, response.statusCode, "receives HTTP 200 response")
             assertTrue(response.body.data.balances.btc.total_amount.isNotEmpty(), "BTC ledger exists ")
         }
     }
