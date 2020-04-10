@@ -1,4 +1,4 @@
 package de.nykon.bitcoin.sdk
 
-interface ExecuteTrade {
+interface ExecuteTrade : Authentication {
 }

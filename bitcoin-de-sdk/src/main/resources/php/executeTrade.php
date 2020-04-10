@@ -4,7 +4,7 @@ $server_ip = '3.121.229.90';
 $home_ip = '95.91.237.21';
 $verify_ip = false;
 
-if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || $verify_ip) {
+if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || !$verify_ip) {
 
     $json = file_get_contents('php://input');    
     $request_body = json_decode($json);
@@ -12,29 +12,28 @@ if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || $
     $api_key    = $request_body->api_key;
     $api_secret = $request_body->api_secret;
     $type       = $request_body->type;
+    $order_id   = $request_body->order_id;
     $amount     = $request_body->amount;
-    $price      = $request_body->price;
 
-    if (!empty($api_key) && !empty($api_secret) && !empty($type) && !empty($amount) && !empty($price)) {
+    if (!empty($api_key) && !empty($api_secret) && !empty($type) && !empty($order_id) && !empty($amount)) {
 
         $trading_api_sdk = new TradingApiSdkV4($api_key, $api_secret);
 
-        $response = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_CREATE_ORDER, [
-        TradingApiSdkV4::CREATE_ORDER_PARAMETER_TYPE                            => $type,
-        TradingApiSdkV4::CREATE_ORDER_PARAMETER_TRADING_PAIR                    => TradingApiSdkV4::TRADING_PAIR_BTCEUR,
-        TradingApiSdkV4::CREATE_ORDER_PARAMETER_MAX_AMOUNT_CURRENCY_TO_TRADE    => $amount,
-        TradingApiSdkV4::CREATE_ORDER_PARAMETER_PRICE                           => $price,
+        $response = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_EXECUTE_TRADE, [
+        TradingApiSdkV4::EXECUTE_TRADE_PARAMETER_TYPE                            => $type,
+        TradingApiSdkV4::EXECUTE_TRADE_PARAMETER_TRADING_PAIR                    => TradingApiSdkV4::TRADING_PAIR_BTCEUR,
+        TradingApiSdkV4::EXECUTE_TRADE_PARAMETER_ORDER_ID                        => $order_id,
+        TradingApiSdkV4::EXECUTE_TRADE_PARAMETER_AMOUNT_CURRENCY_TO_TRADE        => $amount,
         ]);
 
         echo(json_encode($response));
-
 
     } else {
         if ($api_key == null) echo "\napi key is not set";
         if ($api_secret == null) echo "\napi secret is not set";
         if ($type == null) echo "\ntype is not set";
+        if ($order_id == null) echo "\norder ID is not set";
         if ($amount == null) echo "\namount is not set";
-        if ($price == null) echo "\nprice is not set";
     }
 }
 

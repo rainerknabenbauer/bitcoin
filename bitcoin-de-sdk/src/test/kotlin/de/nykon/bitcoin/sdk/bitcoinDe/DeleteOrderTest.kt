@@ -1,6 +1,8 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
 import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
+import org.assertj.core.api.SoftAssertions
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -19,9 +21,16 @@ internal class DeleteOrderTest {
         // act
         val response = testee.execute(orderId)
 
+        val hasExpectedErrorMessage = response.body.errors!!
+                .flatMap { listOf(it.message) }
+                .contains("Invalid order_id")
+
         // assert
-        assertEquals(200, response.statusCode)
-        assertEquals(1, response.body.errors?.size)
+        SoftAssertions().apply {
+            assertEquals(200, response.statusCode, "receives HTTP 200 response")
+            assertEquals(1, response.body.errors?.size, "contains exactly one error")
+            Assertions.assertTrue(hasExpectedErrorMessage, "has expected error message")
+        }
     }
 
 }
