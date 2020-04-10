@@ -12,7 +12,7 @@ data class ShowOrderbook (
     : Transaction<ShowOrderbookBody>() {
 
     /**
-     * Conveniently wraps the cheapest, public SELL offers in a natural language
+     * Conveniently wraps the cheapest, public SELL (bids) offers in a natural language
      * command to make the framework more user friendly and less prone to error.
      */
     fun sell(): Response<ShowOrderbookBody> {
@@ -21,7 +21,7 @@ data class ShowOrderbook (
     }
 
     /**
-     * Conveniently wraps the cheapest, public BUY offers in a natural language
+     * Conveniently wraps the cheapest, public BUY (asks) offers in a natural language
      * command to make the framework more user friendly and less prone to error.
      */
     fun buy(): Response<ShowOrderbookBody> {
