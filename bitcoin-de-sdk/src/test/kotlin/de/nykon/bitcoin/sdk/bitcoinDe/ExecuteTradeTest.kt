@@ -8,10 +8,10 @@ import java.math.BigDecimal
 
 internal class ExecuteTradeTest {
 
-    val apiKey = System.getenv("bitcoin.api.key")
-    val apiSecret = System.getenv("bitcoin.api.secret")
+    private val apiKey = System.getenv("bitcoin.api.key")!!
+    private val apiSecret = System.getenv("bitcoin.api.secret")!!
 
-    val testee = ExecuteTrade(apiKey, apiSecret)
+    private val testee = ExecuteTrade(apiKey, apiSecret)
 
     @Test
     fun `execute BUY`() {
@@ -22,14 +22,14 @@ internal class ExecuteTradeTest {
         // act
         val response = testee.buy(orderID, amount)
 
-        val hasExpectedErrorMessage = response.body.errors!!
+        val hasExpectedErrorMessage = response.body.errors
                 .flatMap { listOf(it.message) }
                 .contains("Invalid order_id")
 
         // assert
         SoftAssertions().apply {
             assertEquals(200, response.statusCode, "receives HTTP 200 response")
-            assertEquals(1, response.body.errors?.size, "contains exactly one error")
+            assertEquals(1, response.body.errors.size, "contains exactly one error")
             assertTrue(hasExpectedErrorMessage, "has expected error message")
         }
     }
@@ -43,14 +43,14 @@ internal class ExecuteTradeTest {
         // act
         val response = testee.sell(orderID, amount)
 
-        val hasExpectedErrorMessage = response.body.errors!!
+        val hasExpectedErrorMessage = response.body.errors
                 .flatMap { listOf(it.message) }
                 .contains("Invalid order_id")
 
         // assert
         SoftAssertions().apply {
             assertEquals(200, response.statusCode, "receives HTTP 200 response")
-            assertEquals(1, response.body.errors?.size, "contains exactly one error")
+            assertEquals(1, response.body.errors.size, "contains exactly one error")
             assertFalse(hasExpectedErrorMessage, "has expected error message")
         }
     }

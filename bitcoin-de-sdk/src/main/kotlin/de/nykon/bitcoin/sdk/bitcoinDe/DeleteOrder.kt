@@ -26,7 +26,7 @@ data class DeleteOrder(
                 .replace("{{api_secret}}", apiSecret)
                 .replace("{{order_id}}", orderId.value)
 
-        return execute(json)
+        return super.execute(json)
     }
 
     override fun convert(body: String?): DeleteOrderBody {

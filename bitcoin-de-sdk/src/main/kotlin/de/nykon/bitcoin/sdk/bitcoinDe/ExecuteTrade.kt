@@ -51,7 +51,7 @@ data class ExecuteTrade(
                 .replace("{{order_id}}", orderId.value)
                 .replace("{{amount}}", amount.toPlainString())
 
-        return execute(json)
+        return super.execute(json)
     }
 
     override fun convert(body: String?): ExecuteTradeBody {

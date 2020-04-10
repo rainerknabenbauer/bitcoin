@@ -8,6 +8,6 @@ import de.nykon.bitcoin.sdk.value.Errors
  * @see de.nykon.bitcoin.sdk.value.Response
  */
 class DeleteOrderBody {
-    var errors: List<Errors>? = null
+    var errors: List<Errors> = ArrayList()
     var credits = 0
 }
