@@ -1,7 +1,9 @@
 package de.nykon.bitcoin.sdk.value.showAccountInfo
 
+import java.math.BigDecimal
+
 data class Eth(
-    val available_amount: Double,
-    val reserved_amount: Double,
-    val total_amount: Double
+        val available_amount: BigDecimal,
+        val reserved_amount: BigDecimal,
+        val total_amount: BigDecimal
 )

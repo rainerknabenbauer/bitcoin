@@ -9,11 +9,10 @@ import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Component
-class Seller(
-        private val config: SellSchedulerConfiguration
-) {
+class Seller(private val config: SellSchedulerConfiguration) {
 
     private val apiKey = System.getenv("bitcoin.api.key")!!
     private val apiSecret = System.getenv("bitcoin.api.secret")!!
@@ -29,14 +28,17 @@ class Seller(
     @Scheduled(cron = "0 * * * * *")
     fun sellCoins() {
 
-        val myOrders = showMyOrders.all()
-        val sellOrderbook = showOrderbook.sell()
+        if (config.isActive) {
 
-        val myLowestPrice = findMyLowestPrice(myOrders)
-        val averagePrice = findAveragePrice(sellOrderbook)
+            val myOrders = showMyOrders.all()
+            val sellOrderbook = showOrderbook.sell()
 
-        if (averagePrice < myLowestPrice) {
-            optimizeSalesRank(myOrders, BigDecimal.valueOf(averagePrice))
+            val myLowestPrice = findMyLowestPrice(myOrders)
+            val averagePrice = findAveragePrice(sellOrderbook)
+
+            if (averagePrice < myLowestPrice) {
+                optimizeSalesRank(myOrders, averagePrice)
+            }
         }
     }
 
@@ -48,27 +50,28 @@ class Seller(
     }
 
     /* Get the cheapest offers and calculate an average price */
-    private fun findAveragePrice(sellOrderbook: Response<ShowOrderbookBody>): Double {
+    private fun findAveragePrice(sellOrderbook: Response<ShowOrderbookBody>): BigDecimal {
         return sellOrderbook.body.orders
                 .filterIndexed { index, _ -> index < consideredOrderSize }
                 .map { order -> order.price }
-                .average()
+                .reduce(BigDecimal::add)
+                .divide(consideredOrderSize.toBigDecimal(), RoundingMode.DOWN).setScale(2)
     }
 
     /* Get my lowest price. If no price is available, default to zero */
-    private fun findMyLowestPrice(myOrders: Response<ShowMyOrdersBody>): Double {
+    private fun findMyLowestPrice(myOrders: Response<ShowMyOrdersBody>): BigDecimal {
         return myOrders.body.orders
                 .filter { it.type == TransactionType.SELL.name }
                 .map { order -> order.price }
                 .min()
-                ?: 0.0
+                ?: BigDecimal.ZERO
     }
 
     /* Delete outdated bids and re-submit with new average price */
     private fun optimizeSalesRank(myOrders: Response<ShowMyOrdersBody>, averagePrice: BigDecimal) {
         deleteOrders(myOrders)
         val accountInfo = showAccountInfo.execute()
-        val availableCoins = BigDecimal.valueOf(accountInfo.body.data.balances.btc.available_amount).setScale(8)
+        val availableCoins = accountInfo.body.data.balances.btc.available_amount.setScale(8)
 
         if (availableCoins == BigDecimal.ZERO) {
             deactivateSchedule()
@@ -78,7 +81,7 @@ class Seller(
     }
 
     private fun deactivateSchedule() {
-        config.isSellActive = false
+        config.isActive = false
     }
 
 }

@@ -6,11 +6,11 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 open class SellSchedulerConfiguration {
 
-    var isSellActive = false
+    var isActive = false
 
     @Bean
     open fun sellConfiguration(): Boolean {
-        return isSellActive
+        return isActive
     }
 
 
