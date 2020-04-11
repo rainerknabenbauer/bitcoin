@@ -6,6 +6,9 @@ import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.TransactionType
 import de.nykon.bitcoin.sdk.value.showMyOrders.ShowMyOrdersBody
 import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -18,13 +21,16 @@ class Seller(
         private val showOrderbook: ShowOrderbook,
         private val deleteOrder: DeleteOrder,
         private val createOrder: CreateOrder
-
 ) {
+
+    private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
     @Scheduled(cron = "0 * * * * *")
     fun sellCoins() {
 
         if (config.isActive) {
+
+            log.info("Seller schedule is active.")
 
             val myOrders = showMyOrders.all()
             val sellOrderbook = showOrderbook.sell()
@@ -35,6 +41,8 @@ class Seller(
             if (myLowestPrice == BigDecimal.ZERO || averagePrice < myLowestPrice) {
 
                 /* Delete outdated bids and re-submit with new average price */
+
+                log.info("Updating offer from $myLowestPrice to $averagePrice")
 
                 val accountInfo = showAccountInfo.execute()
                 val availableCoins = accountInfo.body.data.balances.btc.available_amount

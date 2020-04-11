@@ -12,6 +12,4 @@ class SalesController {
         return "Not implemented"
     }
 
-
-
 }
