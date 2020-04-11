@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class HomeController {
 
+    var requestCounter = 0
+
     @GetMapping(path = ["/", ""])
     fun saveOffers(): String {
-
-        return "hello world"
+        requestCounter++
+        return "hello world requested $requestCounter times"
     }
 
 }
