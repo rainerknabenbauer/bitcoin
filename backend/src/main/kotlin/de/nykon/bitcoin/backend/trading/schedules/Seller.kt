@@ -39,7 +39,7 @@ class Seller(
                 val accountInfo = showAccountInfo.execute()
                 val availableCoins = accountInfo.body.data.balances.btc.available_amount
 
-                deleteOrders(myOrders)
+                if (config.apiActive) deleteOrders(myOrders)
 
                 setResult(availableCoins, averagePrice)
             }
@@ -50,7 +50,7 @@ class Seller(
         if (availableCoins == BigDecimal.ZERO) {
             deactivateSchedule()
         } else {
-            createOrder.sell(averagePrice, availableCoins)
+            if (config.apiActive) createOrder.sell(averagePrice, availableCoins)
         }
     }
 

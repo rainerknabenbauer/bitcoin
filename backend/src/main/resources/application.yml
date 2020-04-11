@@ -24,7 +24,20 @@ limits:
       stepsize: 0
 
 spring:
+  profiles:
+    active: dev
   data:
     mongodb:
       uri: mongodb://127.0.0.1:27017
       database: bitcoin
+---
+spring:
+  profiles: dev
+api:
+  active: false
+
+---
+spring:
+  profiles: prod
+api:
+  active: true
