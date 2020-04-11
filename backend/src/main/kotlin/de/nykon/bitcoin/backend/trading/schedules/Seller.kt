@@ -6,7 +6,6 @@ import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.TransactionType
 import de.nykon.bitcoin.sdk.value.showMyOrders.ShowMyOrdersBody
 import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -40,7 +39,7 @@ class Seller(
                 val accountInfo = showAccountInfo.execute()
                 val availableCoins = accountInfo.body.data.balances.btc.available_amount
 
-                if (config.apiActive) deleteOrders(myOrders)
+                if (config.isLiveChange) deleteOrders(myOrders)
 
                 setResult(availableCoins, averagePrice)
             }
@@ -51,7 +50,7 @@ class Seller(
         if (availableCoins == BigDecimal.ZERO) {
             deactivateSchedule()
         } else {
-            if (config.apiActive) createOrder.sell(averagePrice, availableCoins)
+            if (config.isLiveChange) createOrder.sell(averagePrice, availableCoins)
         }
     }
 
