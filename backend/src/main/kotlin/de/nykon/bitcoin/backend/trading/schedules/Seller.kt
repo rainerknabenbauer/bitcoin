@@ -6,6 +6,7 @@ import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.TransactionType
 import de.nykon.bitcoin.sdk.value.showMyOrders.ShowMyOrdersBody
 import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -32,7 +33,7 @@ class Seller(
             val myLowestPrice = findMyLowestPrice(myOrders)
             val averagePrice = findAveragePrice(sellOrderbook)
 
-            if (averagePrice < myLowestPrice) {
+            if (myLowestPrice == BigDecimal.ZERO || averagePrice < myLowestPrice) {
 
                 /* Delete outdated bids and re-submit with new average price */
 
@@ -56,9 +57,11 @@ class Seller(
 
     /* Remove all active orders */
     fun deleteOrders(myOrders: Response<ShowMyOrdersBody>) {
-        myOrders.body.myOrders
-                .map { order -> order.order_id }
-                .forEach{orderId -> deleteOrder.execute(orderId)}
+        if (myOrders.body.myOrders == null) {
+            myOrders.body.myOrders!!
+                    .map { order -> order.order_id }
+                    .forEach{orderId -> deleteOrder.execute(orderId)}
+        }
     }
 
     /* Get the cheapest offers and calculate an average price */
@@ -72,11 +75,14 @@ class Seller(
 
     /* Get my lowest price. If no price is available, default to zero */
     fun findMyLowestPrice(myOrders: Response<ShowMyOrdersBody>): BigDecimal {
-        return myOrders.body.myOrders
-                .filter { it.type == TransactionType.SELL.name }
-                .map { order -> order.price }
-                .min()
-                ?: BigDecimal.ZERO
+        return if (myOrders.body.myOrders == null) {
+            BigDecimal.ZERO
+        } else {
+            myOrders.body.myOrders!!
+                    .filter { it.type == TransactionType.SELL.name }
+                    .map { order -> order.price }
+                    .min()!!
+        }
     }
 
     private fun deactivateSchedule() {

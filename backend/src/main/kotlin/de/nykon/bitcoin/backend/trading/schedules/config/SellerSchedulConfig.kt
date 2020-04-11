@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 open class SellerSchedulConfig {
 
-    var isActive = false
+    var isActive = true
     val consideredOrderSize = 5
 
     @Value(value = "\${api.active}")
-    var apiActive: Boolean = true
+    var apiActive: Boolean = false
 
 }
