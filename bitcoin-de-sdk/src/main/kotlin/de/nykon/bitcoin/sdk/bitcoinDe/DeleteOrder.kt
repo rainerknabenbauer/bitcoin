@@ -6,7 +6,7 @@ import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.deleteOrder.DeleteOrderBody
 
-data class DeleteOrder(
+open class DeleteOrder(
         override val apiKey: String,
         override val apiSecret: String)
     : Transaction<DeleteOrderBody>() {

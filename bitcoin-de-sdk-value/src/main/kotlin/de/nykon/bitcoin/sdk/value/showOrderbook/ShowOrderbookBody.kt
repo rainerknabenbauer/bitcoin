@@ -5,3 +5,4 @@ data class ShowOrderbookBody(
     val errors: List<Any>,
     val orders: List<Order>
 )
+

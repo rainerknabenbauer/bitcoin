@@ -5,7 +5,7 @@ import de.nykon.bitcoin.sdk.Transaction
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.showOrderbookCompact.ShowOrderbookCompactBody
 
-data class ShowOrderbookCompact(
+open class ShowOrderbookCompact(
         override val apiKey: String,
         override val apiSecret: String)
     : Transaction<ShowOrderbookCompactBody>() {

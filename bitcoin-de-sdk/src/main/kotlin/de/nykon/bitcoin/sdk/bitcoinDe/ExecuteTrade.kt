@@ -8,7 +8,7 @@ import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
 import de.nykon.bitcoin.sdk.value.executeTrade.ExecuteTradeBody
 import java.math.BigDecimal
 
-data class ExecuteTrade(
+open class ExecuteTrade(
         override val apiKey: String,
         override val apiSecret: String)
     : Transaction<ExecuteTradeBody>() {

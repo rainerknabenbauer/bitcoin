@@ -7,7 +7,7 @@ import de.nykon.bitcoin.sdk.value.TransactionType
 import de.nykon.bitcoin.sdk.value.createOrder.CreateOrderBody
 import java.math.BigDecimal
 
-class CreateOrder(
+open class CreateOrder(
         override val apiKey: String,
         override val apiSecret: String)
     : Transaction<CreateOrderBody>() {

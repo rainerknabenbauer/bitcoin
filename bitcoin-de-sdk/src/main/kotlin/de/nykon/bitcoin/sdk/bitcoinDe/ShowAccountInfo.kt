@@ -5,7 +5,7 @@ import de.nykon.bitcoin.sdk.Transaction
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.showAccountInfo.ShowAccountInfoBody
 
-data class ShowAccountInfo(
+open class ShowAccountInfo(
         override val apiKey: String,
         override val apiSecret: String)
     : Transaction<ShowAccountInfoBody>() {
