@@ -1,5 +1,6 @@
-package de.nykon.bitcoin.backend.repository.value
+package de.nykon.bitcoin.backend.users.value
 
+import de.nykon.bitcoin.backend.users.value.Session
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDateTime
 import java.util.UUID

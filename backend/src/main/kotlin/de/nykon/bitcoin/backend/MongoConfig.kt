@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.backend.repository
+package de.nykon.bitcoin.backend
 
 import com.mongodb.MongoClient
 import org.springframework.context.annotation.Configuration

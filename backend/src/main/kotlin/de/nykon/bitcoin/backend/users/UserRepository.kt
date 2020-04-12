@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.backend.repository
+package de.nykon.bitcoin.backend.users
 
 import de.nykon.bitcoin.backend.users.value.User
 import org.springframework.data.mongodb.repository.MongoRepository

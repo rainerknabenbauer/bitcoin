@@ -1,10 +1,10 @@
 package de.nykon.bitcoin.backend.users.authentication
 
-import de.nykon.bitcoin.backend.repository.UserRepository
-import de.nykon.bitcoin.backend.repository.value.Authentication
-import de.nykon.bitcoin.backend.repository.value.HashUtils
-import de.nykon.bitcoin.backend.repository.value.Session
-import de.nykon.bitcoin.backend.repository.value.User
+import de.nykon.bitcoin.backend.users.UserRepository
+import de.nykon.bitcoin.backend.users.value.Authentication
+import de.nykon.bitcoin.backend.users.HashUtils
+import de.nykon.bitcoin.backend.users.value.Session
+import de.nykon.bitcoin.backend.users.value.User
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*

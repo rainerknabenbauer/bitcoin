@@ -1,6 +1,5 @@
-package de.nykon.bitcoin.backend.repository
+package de.nykon.bitcoin.backend.users
 
-import de.nykon.bitcoin.backend.users.HashUtils
 import de.nykon.bitcoin.backend.users.value.User
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
