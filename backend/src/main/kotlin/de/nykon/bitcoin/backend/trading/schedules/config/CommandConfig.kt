@@ -1,14 +1,18 @@
 package de.nykon.bitcoin.backend.trading.schedules.config
 
 import de.nykon.bitcoin.sdk.bitcoinDe.*
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class CommandConfig {
 
-    private val apiKey = System.getenv("bitcoin.api.key")!!
-    private val apiSecret = System.getenv("bitcoin.api.secret")!!
+    @Value("\${bitcoin.apiKey}")
+    private lateinit var apiKey: String
+
+    @Value("\${bitcoin.apiSecret}")
+    private lateinit var apiSecret: String
 
     @Bean
     open fun showAccountInfo(): ShowAccountInfo {
