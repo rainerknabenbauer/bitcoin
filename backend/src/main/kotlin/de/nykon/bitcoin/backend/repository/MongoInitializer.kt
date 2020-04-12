@@ -1,6 +1,7 @@
 package de.nykon.bitcoin.backend.repository
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.mongodb.core.ReactiveMongoOperations
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
@@ -13,13 +14,13 @@ class MongoInitializer {
 
     @PostConstruct
     fun initData() {
-        mongoOperations.collectionExists("bitcoin").subscribe {
+        mongoOperations.collectionExists("users").subscribe {
             if (it) {
-                println("bitcoin collection already exists.")
+                println("users collection already exists.")
             } else {
-                mongoOperations.createCollection("bitcoin").subscribe()
+                mongoOperations.createCollection("users").subscribe()
                 {
-                    println("bitcoin collection created.")
+                    println("users collection created.")
                 }
             }
         }

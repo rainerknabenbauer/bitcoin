@@ -1,27 +1,13 @@
 server:
   port: 8888
 
-limits:
-  relative:
-    buy:
-      short: 0.01
-      medium: 0.03
-      long: 0.05
-    sell:
-      short: 0.01
-      medium: 0.03
-      long: 0.05
-  fixed:
-    buy:
-      short: 50
-      medium: 125
-      long: 250
-      stepsize: 5
-    sell:
-      short: -30
-      medium: -70
-      long: -150
-      stepsize: 0
+bitcoin:
+  apiKey:
+  apiSecret:
+
+default:
+  user:
+  password:
 
 spring:
   profiles:
@@ -30,6 +16,7 @@ spring:
     mongodb:
       uri: mongodb://127.0.0.1:27017
       database: bitcoin
+
 ---
 spring:
   profiles: dev
