@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.backend.repository.value
+package de.nykon.bitcoin.backend.users
 
 data class Authentication(
         val name: String,

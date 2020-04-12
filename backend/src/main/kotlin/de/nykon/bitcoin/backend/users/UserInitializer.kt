@@ -1,13 +1,12 @@
 package de.nykon.bitcoin.backend.repository
 
-import de.nykon.bitcoin.backend.repository.value.HashUtils
-import de.nykon.bitcoin.backend.repository.value.User
+import de.nykon.bitcoin.backend.users.HashUtils
+import de.nykon.bitcoin.backend.users.value.User
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
 import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
 
 @Component
 class UserInitializer(private var userRepository: UserRepository) {
