@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Configuration
 open class CommandConfig {
 
     @Value("\${bitcoin.apiKey}")
-    private lateinit var apiKey: String
+    lateinit var apiKey: String
 
     @Value("\${bitcoin.apiSecret}")
-    private lateinit var apiSecret: String
+    lateinit var apiSecret: String
 
     @Bean
     open fun showAccountInfo(): ShowAccountInfo {

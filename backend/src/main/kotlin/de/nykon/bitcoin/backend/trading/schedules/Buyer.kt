@@ -90,18 +90,6 @@ class Buyer(
                 .divide(config.consideredOrderSize.toBigDecimal(), 2, RoundingMode.HALF_DOWN)
     }
 
-    /* Get my lowest price. If no price is available, default to zero */
-    fun findMyLowestPrice(myOrders: Response<ShowMyOrdersBody>): BigDecimal {
-        return if (myOrders.body.orders.isNullOrEmpty()) {
-            BigDecimal.ZERO
-        } else {
-            myOrders.body.orders!!
-                    .filter { it.type == TransactionType.SELL.name }
-                    .map { order -> order.price }
-                    .min()!!
-        }
-    }
-
     private fun deactivateSchedule() {
         config.isActive = false
     }
