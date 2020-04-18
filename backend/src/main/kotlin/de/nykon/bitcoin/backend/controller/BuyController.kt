@@ -21,13 +21,13 @@ class BuyController(private val buyerSchedulConfig: BuyerSchedulConfig) {
     @GetMapping(path = ["/buy/activate"])
     fun activateBuyer() {
         this.buyerSchedulConfig.isActive = true
-        log.info("Set seller schedule to ${this.buyerSchedulConfig.isActive}")
+        log.info("Set buyer schedule to ${this.buyerSchedulConfig.isActive}")
     }
 
     @GetMapping(path = ["/buy/deactivate"])
     fun deactivateBuyer() {
         this.buyerSchedulConfig.isActive = false
-        log.info("Set seller schedule to ${this.buyerSchedulConfig.isActive}")
+        log.info("Set buyer schedule to ${this.buyerSchedulConfig.isActive}")
     }
 
 }

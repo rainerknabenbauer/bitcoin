@@ -23,6 +23,13 @@ abstract class Transaction<T> : Authentication {
 
         val receive = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
 
+        /*
+          Nonce is timestamped and part of the cryptographic signature.
+          A nonce has the be unique and must be followed by increased in the next request.
+          This is a fugly workaround until this gets independent of a timestamp in seconds.
+         */
+        Thread.sleep(1_100)
+
         return Response(receive.statusCode(), convert(receive.body()))
     }
 

@@ -27,6 +27,9 @@ internal class BuyerTest {
     var deleteOrder: DeleteOrder = mock()
     var createOrder: CreateOrder = mock()
 
+    private val apiKey = System.getenv("bitcoin.api.key")!!
+    private val apiSecret = System.getenv("bitcoin.api.secret")!!
+
     @Test
     fun `calculate amount of coins`() {
         // arrange
@@ -43,6 +46,27 @@ internal class BuyerTest {
         // assert
         SoftAssertions().apply {
             Assertions.assertEquals(expected, actual, "calculated amount of coins")
+        }
+    }
+
+    @Test
+    fun `delete open orders`() {
+        // arrange
+        var deleteOrder = DeleteOrder(apiKey, apiSecret)
+        var showMyOrders = ShowMyOrders(apiKey, apiSecret)
+        val myOrders = showMyOrders.all()
+
+        // act
+        var testee = Buyer(config, showAccountInfo, showMyOrders,
+                showOrderbook, deleteOrder, createOrder)
+
+        testee.deleteOrders(myOrders)
+
+        val noOrdersLeft = showMyOrders.all()
+
+        // assert
+        SoftAssertions().apply {
+            Assertions.assertTrue(noOrdersLeft.body.orders.isNullOrEmpty())
         }
     }
 }

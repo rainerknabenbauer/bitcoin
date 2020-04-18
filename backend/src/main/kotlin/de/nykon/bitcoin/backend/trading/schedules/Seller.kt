@@ -25,7 +25,7 @@ class Seller(
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    @Scheduled(fixedDelay = 8000)
+    @Scheduled(fixedDelay = 30000)
     fun sellCoins() {
 
         if (config.isActive) {
@@ -62,8 +62,8 @@ class Seller(
 
     /* Remove all active orders */
     fun deleteOrders(myOrders: Response<ShowMyOrdersBody>) {
-        if (myOrders.body.myOrders == null) {
-            myOrders.body.myOrders!!
+        if (myOrders.body.orders == null) {
+            myOrders.body.orders!!
                     .map { order -> order.order_id }
                     .forEach { orderId -> deleteOrder.execute(orderId) }
         }
@@ -80,11 +80,11 @@ class Seller(
 
     /* Get my lowest price. If no price is available, default to zero */
     fun findMyLowestPrice(myOrders: Response<ShowMyOrdersBody>): BigDecimal {
-        return if (myOrders.body.myOrders == null) {
+        return if (myOrders.body.orders == null) {
             BigDecimal.ZERO
         } else {
-            myOrders.body.myOrders!!
-                    .filter { it.type == TransactionType.SELL.name }
+            myOrders.body.orders!!
+                    .filter { it.type == TransactionType.BUY.name }
                     .map { order -> order.price }
                     .min()!!
         }
