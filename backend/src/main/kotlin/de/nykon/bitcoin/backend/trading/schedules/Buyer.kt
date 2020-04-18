@@ -1,9 +1,14 @@
 package de.nykon.bitcoin.backend.trading.schedules
 
-import de.nykon.bitcoin.backend.trading.schedules.config.SellerSchedulConfig
-import de.nykon.bitcoin.sdk.bitcoinDe.*
+import de.nykon.bitcoin.backend.trading.schedules.config.BuyerSchedulConfig
+import de.nykon.bitcoin.sdk.bitcoinDe.CreateOrder
+import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.TransactionType
+import de.nykon.bitcoin.sdk.value.showAccountInfo.FidorReservation
 import de.nykon.bitcoin.sdk.value.showMyOrders.ShowMyOrdersBody
 import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
 import org.slf4j.Logger
@@ -14,8 +19,8 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Component
-class Seller(
-        private val config: SellerSchedulConfig,
+class Buyer(
+        private val config: BuyerSchedulConfig,
         private val showAccountInfo: ShowAccountInfo,
         private val showMyOrders: ShowMyOrders,
         private val showOrderbook: ShowOrderbook,
@@ -26,29 +31,37 @@ class Seller(
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
     @Scheduled(fixedDelay = 8000)
-    fun sellCoins() {
+    fun buyCoins() {
 
         if (config.isActive) {
 
-            log.info("Seller schedule is active.")
+            log.info("Buyer schedule is active.")
 
             val myOrders = showMyOrders.all()
-            val sellOrderbook = showOrderbook.sell()
+            val buyOrderbook = showOrderbook.buy()
 
             val myLowestPrice = findMyLowestPrice(myOrders)
-            val averagePrice = findAveragePrice(sellOrderbook)
+            val averagePrice = findAveragePrice(buyOrderbook)
 
             /* Delete outdated bids and re-submit with new average price */
 
-            log.info("Updating SELLER from $myLowestPrice to $averagePrice")
+            log.info("Updating BUYER from $myLowestPrice to $averagePrice")
 
             val accountInfo = showAccountInfo.execute()
-            val availableCoins = accountInfo.body.data.balances.btc.available_amount
+            val fidorReservation = accountInfo.body.data.fidor_reservation
 
-            if (config.isLiveChange) deleteOrders(myOrders)
+            if (fidorReservation != null) {
+                val amountOfCoins = calculateAmountOfCoins(fidorReservation, averagePrice)
 
-            setResult(availableCoins, averagePrice, sellOrderbook.body.credits)
+                if (config.isLiveChange) deleteOrders(myOrders)
+
+                setResult(amountOfCoins, averagePrice, buyOrderbook.body.credits)
+            }
         }
+    }
+
+    fun calculateAmountOfCoins(fidorReservation: FidorReservation, averagePrice: BigDecimal): BigDecimal {
+        return fidorReservation.available_amount.divide(averagePrice, 8, RoundingMode.DOWN)
     }
 
     fun setResult(availableCoins: BigDecimal, averagePrice: BigDecimal, credits: Int) {
@@ -93,5 +106,6 @@ class Seller(
     private fun deactivateSchedule() {
         config.isActive = false
     }
+
 
 }

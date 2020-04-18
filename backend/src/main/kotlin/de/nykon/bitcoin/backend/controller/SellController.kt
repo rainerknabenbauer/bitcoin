@@ -9,22 +9,22 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class SalesController(private val sellerSchedulConfig: SellerSchedulConfig) {
+class SellController(private val sellerSchedulConfig: SellerSchedulConfig) {
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping(path = ["/sales/exitPrice/{price}"])
+    @PostMapping(path = ["/sell/exitPrice/{price}"])
     fun setExitPrice(@PathVariable price: Int): String {
         return "Not implemented"
     }
 
-    @GetMapping(path = ["/sales/activate"])
+    @GetMapping(path = ["/sell/activate"])
     fun activateSeller() {
         this.sellerSchedulConfig.isActive = true
         log.info("Set seller schedule to ${this.sellerSchedulConfig.isActive}")
     }
 
-    @GetMapping(path = ["/sales/deactivate"])
+    @GetMapping(path = ["/sell/deactivate"])
     fun deactivateSeller() {
         this.sellerSchedulConfig.isActive = false
         log.info("Set seller schedule to ${this.sellerSchedulConfig.isActive}")
