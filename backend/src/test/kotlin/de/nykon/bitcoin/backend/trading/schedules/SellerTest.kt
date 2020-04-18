@@ -37,7 +37,7 @@ internal class SellerTest {
                 showOrderbook, deleteOrder, createOrder)
 
         // act
-        testee.setResult(BigDecimal.ZERO, BigDecimal.valueOf(1000))
+        testee.setResult(BigDecimal.ZERO, BigDecimal.valueOf(1000), 0)
 
         // assert
         SoftAssertions().apply {

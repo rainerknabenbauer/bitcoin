@@ -25,9 +25,8 @@ class UserInitializer(private var userRepository: UserRepository) {
             val defaultUser = User(
                     UUID.randomUUID(),
                     defaultUser,
-                    HashUtils.sha256(defaultPassword),
-                    LocalDateTime.now(),
-                    null
+                    HashUtils.sha512(defaultPassword),
+                    LocalDateTime.now()
             )
 
             userRepository.save(defaultUser)

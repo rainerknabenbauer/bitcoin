@@ -6,12 +6,12 @@ import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.TransactionType
 import de.nykon.bitcoin.sdk.value.showMyOrders.ShowMyOrdersBody
 import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Component
 class Seller(
@@ -25,7 +25,7 @@ class Seller(
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(fixedDelay = 8000)
     fun sellCoins() {
 
         if (config.isActive) {
@@ -38,27 +38,25 @@ class Seller(
             val myLowestPrice = findMyLowestPrice(myOrders)
             val averagePrice = findAveragePrice(sellOrderbook)
 
-            if (myLowestPrice == BigDecimal.ZERO || averagePrice < myLowestPrice) {
+            /* Delete outdated bids and re-submit with new average price */
 
-                /* Delete outdated bids and re-submit with new average price */
+            log.info("Updating offer from $myLowestPrice to $averagePrice")
 
-                log.info("Updating offer from $myLowestPrice to $averagePrice")
+            val accountInfo = showAccountInfo.execute()
+            val availableCoins = accountInfo.body.data.balances.btc.available_amount
 
-                val accountInfo = showAccountInfo.execute()
-                val availableCoins = accountInfo.body.data.balances.btc.available_amount
+            if (config.isLiveChange) deleteOrders(myOrders)
 
-                if (config.isLiveChange) deleteOrders(myOrders)
-
-                setResult(availableCoins, averagePrice)
-            }
+            setResult(availableCoins, averagePrice, sellOrderbook.body.credits)
         }
     }
 
-    fun setResult(availableCoins: BigDecimal, averagePrice: BigDecimal) {
+    fun setResult(availableCoins: BigDecimal, averagePrice: BigDecimal, credits: Int) {
         if (availableCoins == BigDecimal.ZERO) {
             deactivateSchedule()
         } else {
             if (config.isLiveChange) createOrder.sell(averagePrice, availableCoins)
+            else log.info("Average price: $averagePrice | available coins: $availableCoins | credits: $credits")
         }
     }
 
@@ -67,17 +65,17 @@ class Seller(
         if (myOrders.body.myOrders == null) {
             myOrders.body.myOrders!!
                     .map { order -> order.order_id }
-                    .forEach{orderId -> deleteOrder.execute(orderId)}
+                    .forEach { orderId -> deleteOrder.execute(orderId) }
         }
     }
 
     /* Get the cheapest offers and calculate an average price */
     fun findAveragePrice(sellOrderbook: Response<ShowOrderbookBody>): BigDecimal {
         return sellOrderbook.body.orders
-                .filterIndexed { index, _ -> index < config.consideredOrderSize }
+                .subList(0, config.consideredOrderSize)
                 .map { order -> order.price }
                 .reduce(BigDecimal::add)
-                .div(config.consideredOrderSize.toBigDecimal())
+                .divide(config.consideredOrderSize.toBigDecimal(), 2, RoundingMode.HALF_DOWN)
     }
 
     /* Get my lowest price. If no price is available, default to zero */

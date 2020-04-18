@@ -8,7 +8,7 @@ open class SellerSchedulConfig {
     var isActive = false
     val consideredOrderSize = 5
 
-    @Value(value = "\${api.active}")
+    @Value(value = "\${api.isLive}")
     var isLiveChange: Boolean = false
 
 }

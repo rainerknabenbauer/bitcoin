@@ -17,7 +17,7 @@ open class ShowOrderbook (
      */
     fun sell(): Response<ShowOrderbookBody> {
 
-        return execute(TransactionType.SELL)
+        return execute(TransactionType.BUY)
     }
 
     /**
@@ -26,7 +26,7 @@ open class ShowOrderbook (
      */
     fun buy(): Response<ShowOrderbookBody> {
 
-        return execute(TransactionType.BUY)
+        return execute(TransactionType.SELL)
     }
 
     fun execute(type: TransactionType): Response<ShowOrderbookBody> {
