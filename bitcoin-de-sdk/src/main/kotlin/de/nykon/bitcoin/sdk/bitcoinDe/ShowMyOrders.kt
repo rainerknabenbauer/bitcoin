@@ -30,7 +30,6 @@ open class ShowMyOrders(
     }
 
     override fun convert(body: String?): ShowMyOrdersBody {
-        println("show my orders: "+body)
         return GsonBuilder().create().fromJson(body, ShowMyOrdersBody::class.java)
     }
 

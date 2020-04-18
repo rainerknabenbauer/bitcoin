@@ -31,7 +31,7 @@ class Buyer(
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 15000)
     fun buyCoins() {
 
         if (config.isActive) {
@@ -88,6 +88,18 @@ class Buyer(
                 .map { order -> order.price }
                 .reduce(BigDecimal::add)
                 .divide(config.consideredOrderSize.toBigDecimal(), 2, RoundingMode.HALF_DOWN)
+    }
+
+    /* Get my lowest price. If no price is available, default to zero */
+    fun findMyLowestPrice(myOrders: Response<ShowMyOrdersBody>): BigDecimal {
+        return if (myOrders.body.orders.isNullOrEmpty()) {
+            BigDecimal.ZERO
+        } else {
+            myOrders.body.orders!!
+                    .filter { it.type == TransactionType.SELL.name }
+                    .map { order -> order.price }
+                    .min()!!
+        }
     }
 
     private fun deactivateSchedule() {

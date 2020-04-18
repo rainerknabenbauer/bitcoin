@@ -4,6 +4,7 @@ import de.nykon.bitcoin.backend.trading.schedules.config.SellerSchedulConfig
 import de.nykon.bitcoin.sdk.bitcoinDe.*
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.TransactionType
+import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
 import de.nykon.bitcoin.sdk.value.showMyOrders.ShowMyOrdersBody
 import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
 import org.slf4j.Logger
@@ -25,7 +26,7 @@ class Seller(
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 15000)
     fun sellCoins() {
 
         if (config.isActive) {
@@ -35,12 +36,11 @@ class Seller(
             val myOrders = showMyOrders.all()
             val sellOrderbook = showOrderbook.sell()
 
-            val myLowestPrice = findMyLowestPrice(myOrders)
             val averagePrice = findAveragePrice(sellOrderbook)
 
             /* Delete outdated bids and re-submit with new average price */
 
-            log.info("Updating SELLER from $myLowestPrice to $averagePrice")
+            log.info("Updating SELLER to $averagePrice")
 
             val accountInfo = showAccountInfo.execute()
             val availableCoins = accountInfo.body.data.balances.btc.available_amount
@@ -62,10 +62,9 @@ class Seller(
 
     /* Remove all active orders */
     fun deleteOrders(myOrders: Response<ShowMyOrdersBody>) {
-        if (myOrders.body.orders == null) {
+        if (myOrders.body.orders != null) {
             myOrders.body.orders!!
-                    .map { order -> order.order_id }
-                    .forEach { orderId -> deleteOrder.execute(orderId) }
+                    .forEach { order -> deleteOrder.execute(OrderId(order.order_id)) }
         }
     }
 
@@ -76,18 +75,6 @@ class Seller(
                 .map { order -> order.price }
                 .reduce(BigDecimal::add)
                 .divide(config.consideredOrderSize.toBigDecimal(), 2, RoundingMode.HALF_DOWN)
-    }
-
-    /* Get my lowest price. If no price is available, default to zero */
-    fun findMyLowestPrice(myOrders: Response<ShowMyOrdersBody>): BigDecimal {
-        return if (myOrders.body.orders == null) {
-            BigDecimal.ZERO
-        } else {
-            myOrders.body.orders!!
-                    .filter { it.type == TransactionType.BUY.name }
-                    .map { order -> order.price }
-                    .min()!!
-        }
     }
 
     private fun deactivateSchedule() {

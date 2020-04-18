@@ -46,28 +46,6 @@ internal class SellerTest {
     }
 
     @Test
-    fun `find lowest price`() {
-        // arrange
-        var testee = Seller(config, showAccountInfo, showMyOrders,
-                showOrderbook, deleteOrder, createOrder)
-
-        val orders = MyOrder.generate(5, 1100.0, 1500.0, TransactionType.SELL.name)
-        val lowestPrice = MyOrder.generate(1, 1000.0, 1000.0, TransactionType.SELL.name)
-        orders.add(lowestPrice.first())
-
-        val showMyOrdersBody = ShowMyOrdersBody(200, Lists.emptyList(), orders)
-        val response = Response(200, showMyOrdersBody)
-
-        // act
-        val myLowestPrice = testee.findMyLowestPrice(response)
-
-        // assert
-        SoftAssertions().apply {
-            assertEquals(BigDecimal.valueOf(1000.0), myLowestPrice)
-        }
-    }
-
-    @Test
     fun `calculate average price`() {
         var testee = Seller(config, showAccountInfo, showMyOrders,
                 showOrderbook, deleteOrder, createOrder)
