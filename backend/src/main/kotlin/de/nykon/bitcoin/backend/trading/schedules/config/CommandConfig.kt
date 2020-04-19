@@ -1,6 +1,11 @@
 package de.nykon.bitcoin.backend.trading.schedules.config
 
-import de.nykon.bitcoin.sdk.bitcoinDe.*
+import de.nykon.bitcoin.sdk.bitcoinDe.CreateOrder
+import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowPublicTradeHistory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

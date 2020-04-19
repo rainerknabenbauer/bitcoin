@@ -2,7 +2,11 @@ package de.nykon.bitcoin.backend.trading.schedules
 
 import com.nhaarman.mockito_kotlin.mock
 import de.nykon.bitcoin.backend.trading.schedules.config.SellerSchedulConfig
-import de.nykon.bitcoin.sdk.bitcoinDe.*
+import de.nykon.bitcoin.sdk.bitcoinDe.CreateOrder
+import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.TransactionType
 import de.nykon.bitcoin.sdk.value.showOrderbook.Order

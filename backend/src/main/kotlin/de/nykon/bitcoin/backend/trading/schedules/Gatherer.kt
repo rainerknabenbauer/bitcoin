@@ -12,7 +12,6 @@ import de.nykon.bitcoin.backend.trading.value.FlattenedSellOrderbook
 import de.nykon.bitcoin.backend.trading.value.LongTermTrade
 import de.nykon.bitcoin.backend.trading.value.SellOrderbook
 import de.nykon.bitcoin.backend.trading.value.ShortTermTrade
-import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowPublicTradeHistory
 import de.nykon.bitcoin.sdk.value.Response
@@ -28,7 +27,6 @@ import java.time.LocalDateTime
 
 @Component
 open class Gatherer(
-        private val showMyOrders: ShowMyOrders,
         private val showOrderbook: ShowOrderbook,
         private val showPublicTradeHistory: ShowPublicTradeHistory,
         private val shortTradeHistoryRepository: ShortTradeHistoryRepository,

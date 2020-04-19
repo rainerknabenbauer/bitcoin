@@ -1,7 +1,8 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
 import org.assertj.core.api.SoftAssertions
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
 internal class ShowAccountInfoTest {

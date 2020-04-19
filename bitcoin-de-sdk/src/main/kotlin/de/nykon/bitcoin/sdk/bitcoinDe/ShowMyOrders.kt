@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder
 import de.nykon.bitcoin.sdk.Transaction
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.showMyOrders.ShowMyOrdersBody
-import de.nykon.bitcoin.sdk.value.showOrderbookCompact.ShowOrderbookCompactBody
 
 open class ShowMyOrders(
         override val apiKey: String,

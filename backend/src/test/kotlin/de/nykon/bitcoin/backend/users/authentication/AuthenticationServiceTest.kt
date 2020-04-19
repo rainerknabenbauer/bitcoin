@@ -3,11 +3,11 @@ package de.nykon.bitcoin.backend.users.authentication
 import de.nykon.bitcoin.backend.users.HashUtils
 import de.nykon.bitcoin.backend.users.value.Authentication
 import org.assertj.core.api.SoftAssertions
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 internal class AuthenticationServiceTest {

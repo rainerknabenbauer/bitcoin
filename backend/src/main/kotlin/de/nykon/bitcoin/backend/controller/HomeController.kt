@@ -1,6 +1,5 @@
 package de.nykon.bitcoin.backend.controller
 
-import de.nykon.bitcoin.backend.sdk.SdkService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
