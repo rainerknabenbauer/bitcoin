@@ -21,7 +21,7 @@ if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || !
 
             TradingApiSdkV4::SHOW_ORDERBOOK_PARAMETER_TRADING_PAIR                    => TradingApiSdkV4::TRADING_PAIR_BTCEUR,
             TradingApiSdkV4::SHOW_ORDERBOOK_PARAMETER_TYPE                            => $type,
-            TradingApiSdkV4::SHOW_ORDERBOOK_PARAMETER_ONLY_EXPRESS_ORDERS             => 1
+            TradingApiSdkV4::SHOW_ORDERBOOK_PARAMETER_ONLY_SAME_BANKGROUP             => true
 
         ]);
 
@@ -454,7 +454,7 @@ class TradingApiSdkV4
             self::TRADING_PAIR => self::SHOW_ORDERBOOK_PARAMETER_TRADING_PAIR,
             'parameters'       => [
                 self::SHOW_ORDERBOOK_PARAMETER_TYPE,
-                self::SHOW_ORDERBOOK_PARAMETER_ONLY_EXPRESS_ORDERS
+                self::SHOW_ORDERBOOK_PARAMETER_ONLY_SAME_BANKGROUP
             ],
         ],
         self::METHOD_SHOW_ORDER_DETAILS => [
