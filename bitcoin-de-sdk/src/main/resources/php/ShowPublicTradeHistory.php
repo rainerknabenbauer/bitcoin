@@ -18,7 +18,7 @@ if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || !
 
         $response = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_SHOW_PUBLIC_TRADE_HISTORY, [
 
-            TradingApiSdkV4::SHOW_PUBLIC_TRADE_HISTORY_PARAMETER_TRADING_PAIR                    => TradingApiSdkV4::TRADING_PAIR_BTCEUR,
+            TradingApiSdkV4::SHOW_PUBLIC_TRADE_HISTORY_PARAMETER_TRADING_PAIR     => TradingApiSdkV4::TRADING_PAIR_BTCEUR,
 
         ]);
 
