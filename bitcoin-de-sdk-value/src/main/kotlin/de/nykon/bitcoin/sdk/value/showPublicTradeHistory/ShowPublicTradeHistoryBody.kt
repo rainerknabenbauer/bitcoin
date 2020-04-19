@@ -1,6 +1,6 @@
 package de.nykon.bitcoin.sdk.value.showPublicTradeHistory
 
-data class ShowPublicTradeHistoryBody(
+open class ShowPublicTradeHistoryBody(
     val credits: Int,
     val errors: List<Any>,
     val trades: List<Trade>,

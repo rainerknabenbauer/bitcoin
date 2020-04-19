@@ -30,6 +30,11 @@ open class CommandConfig {
     }
 
     @Bean
+    open fun showPublicTradeHistory(): ShowPublicTradeHistory {
+        return ShowPublicTradeHistory(apiKey, apiSecret)
+    }
+
+    @Bean
     open fun deleteOrder(): DeleteOrder {
         return DeleteOrder(apiKey, apiSecret)
     }
