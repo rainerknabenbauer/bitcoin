@@ -1,6 +1,7 @@
 package de.nykon.bitcoin.backend.trading.schedules
 
-import de.nykon.bitcoin.backend.trading.PublicTradeHistoryRepository
+import de.nykon.bitcoin.backend.trading.LongTradeHistoryRepository
+import de.nykon.bitcoin.backend.trading.ShortTradeHistoryRepository
 import de.nykon.bitcoin.backend.trading.value.LongTermTrade
 import de.nykon.bitcoin.backend.trading.value.ShortTermTrade
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
@@ -17,7 +18,8 @@ class Gatherer(
         private val showMyOrders: ShowMyOrders,
         private val showOrderbook: ShowOrderbook,
         private val showPublicTradeHistory: ShowPublicTradeHistory,
-        private val publicTradeHistoryRepository: PublicTradeHistoryRepository
+        private val shortTradeHistoryRepository: ShortTradeHistoryRepository,
+        private val longTradeHistoryRepository: LongTradeHistoryRepository
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -30,23 +32,25 @@ class Gatherer(
         publicTradeHistory.body.trades
                 .map { trade -> LongTermTrade(trade.amount_currency_to_trade, trade.date,
                         trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)  }
-                .forEach { trade -> publicTradeHistoryRepository.save(trade) }
+                .forEach { trade -> longTradeHistoryRepository.save(trade) }
 
-        log.info("Saved ${publicTradeHistory.body.trades.size} in Public Trade History")
+        log.info("Saved ${publicTradeHistory.body.trades.size} in Public Trade History " +
+                "| credits: ${publicTradeHistory.body.credits}")
     }
 
     @Scheduled(cron = "0 * * * * *" )
     fun shortTermPublicTradeHistory() {
-        publicTradeHistoryRepository.deleteAll()
 
+        shortTradeHistoryRepository.deleteAll()
         val publicTradeHistory = showPublicTradeHistory.all()
 
         publicTradeHistory.body.trades
                 .map { trade -> ShortTermTrade(trade.amount_currency_to_trade, trade.date,
                         trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)  }
-                .forEach { trade -> publicTradeHistoryRepository.save(trade) }
+                .forEach { trade -> shortTradeHistoryRepository.save(trade) }
 
-        log.info("Saved ${publicTradeHistory.body.trades.size} in Public Trade History")
+        log.info("Saved ${publicTradeHistory.body.trades.size} in Public Trade History " +
+                "| credits: ${publicTradeHistory.body.credits}")
     }
 
 
