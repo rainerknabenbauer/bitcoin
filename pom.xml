@@ -13,13 +13,11 @@
   </parent>
 
   <modules>
+    <module>bitcoin-de-sdk-value</module>
+    <module>bitcoin-de-sdk</module>
     <module>gatherer</module>
     <module>basics</module>
     <module>backend</module>
-    <module>seller</module>
-    <module>buyer</module>
-    <module>bitcoin-de-sdk</module>
-    <module>bitcoin-de-sdk-value</module>
   </modules>
 
   <groupId>de.nykon.bitcoin</groupId>
