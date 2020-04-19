@@ -15,7 +15,7 @@ data class Order(
         val order_requirements_fullfilled: Boolean,
         val price: BigDecimal,
         val trading_pair: String,
-        val trading_partner_information: TradingPartnerInformation?,
+        val trading_partner_information: TradingPartnerInformation,
         val type: String
 ) {
 
@@ -41,7 +41,7 @@ data class Order(
                                 false,
                                 BigDecimal.valueOf(Random.nextDouble(priceRangeStart, priceRangeEnd)),
                                 "btceur",
-                                null,
+                                TradingPartnerInformation(0, "", "", false, 1, "", "", ""),
                                 type
                         )
                 )
