@@ -7,7 +7,6 @@ import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.value.Response
-import de.nykon.bitcoin.sdk.value.TransactionType
 import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
 import de.nykon.bitcoin.sdk.value.showAccountInfo.FidorReservation
 import de.nykon.bitcoin.sdk.value.showMyOrders.ShowMyOrdersBody
@@ -55,7 +54,7 @@ class Buyer(
 
                 if (config.isLiveChange) deleteOrders(myOrders)
 
-                setResult(amountOfCoins, averagePrice, buyOrderbook.body.credits)
+                createOrder(amountOfCoins, averagePrice, buyOrderbook.body.credits)
             }
         }
     }
@@ -64,7 +63,7 @@ class Buyer(
         return fidorReservation.available_amount.divide(averagePrice, 8, RoundingMode.DOWN)
     }
 
-    fun setResult(availableCoins: BigDecimal, averagePrice: BigDecimal, credits: Int) {
+    fun createOrder(availableCoins: BigDecimal, averagePrice: BigDecimal, credits: Int) {
         if (availableCoins == BigDecimal.ZERO) {
             deactivateSchedule()
         } else {

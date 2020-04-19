@@ -3,7 +3,6 @@ package de.nykon.bitcoin.backend.trading.schedules
 import de.nykon.bitcoin.backend.trading.schedules.config.SellerSchedulConfig
 import de.nykon.bitcoin.sdk.bitcoinDe.*
 import de.nykon.bitcoin.sdk.value.Response
-import de.nykon.bitcoin.sdk.value.TransactionType
 import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
 import de.nykon.bitcoin.sdk.value.showMyOrders.ShowMyOrdersBody
 import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
@@ -47,11 +46,11 @@ class Seller(
 
             if (config.isLiveChange) deleteOrders(myOrders)
 
-            setResult(availableCoins, averagePrice, sellOrderbook.body.credits)
+            createOrder(availableCoins, averagePrice, sellOrderbook.body.credits)
         }
     }
 
-    fun setResult(availableCoins: BigDecimal, averagePrice: BigDecimal, credits: Int) {
+    fun createOrder(availableCoins: BigDecimal, averagePrice: BigDecimal, credits: Int) {
         if (availableCoins == BigDecimal.ZERO) {
             deactivateSchedule()
         } else {

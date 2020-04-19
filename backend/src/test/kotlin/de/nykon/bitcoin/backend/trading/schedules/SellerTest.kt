@@ -5,12 +5,9 @@ import de.nykon.bitcoin.backend.trading.schedules.config.SellerSchedulConfig
 import de.nykon.bitcoin.sdk.bitcoinDe.*
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.TransactionType
-import de.nykon.bitcoin.sdk.value.showMyOrders.MyOrder
-import de.nykon.bitcoin.sdk.value.showMyOrders.ShowMyOrdersBody
 import de.nykon.bitcoin.sdk.value.showOrderbook.Order
 import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
 import org.assertj.core.api.SoftAssertions
-import org.assertj.core.util.Lists
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
@@ -37,7 +34,7 @@ internal class SellerTest {
                 showOrderbook, deleteOrder, createOrder)
 
         // act
-        testee.setResult(BigDecimal.ZERO, BigDecimal.valueOf(1000), 0)
+        testee.createOrder(BigDecimal.ZERO, BigDecimal.valueOf(1000), 0)
 
         // assert
         SoftAssertions().apply {

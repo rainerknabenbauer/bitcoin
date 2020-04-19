@@ -47,7 +47,7 @@ class SdkService(
                     .forEach { order ->
                         run {
                             deleteOrder.execute(OrderId(order.order_id))
-                            log.info("deleted order ${order.order_id}")
+                            log.info("eleted order ${order.order_id}")
                         }
                     }
         }
