@@ -1,11 +1,15 @@
 package de.nykon.bitcoin.sdk
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import de.nykon.bitcoin.sdk.value.Response
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 abstract class Transaction<T> : Authentication {
+
+    private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
     val uri = "https://nykon.de/bitcoin/${this::class.simpleName}.php"
     val jsonFile = "/json/${this::class.simpleName}.json"
@@ -28,7 +32,18 @@ abstract class Transaction<T> : Authentication {
           A nonce has the be unique and must be followed by increased in the next request.
           This is a fugly workaround until this gets independent of a timestamp in seconds.
          */
-        Thread.sleep(1_100)
+        var finished = false
+        while (!finished) {
+            finished = try {
+                log.info("Entering sleep state")
+                Thread.sleep(1_100)
+                log.info("Exiting sleep state")
+                true
+            } catch (e: InterruptedException) {
+                log.info("Thread sleep was interrupted")
+                false
+            }
+        }
 
         return Response(receive.statusCode(), convert(receive.body()))
     }
