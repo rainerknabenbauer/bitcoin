@@ -68,7 +68,12 @@ open class Gatherer(
         publicTradeHistory.body.trades
                 .map { trade -> ShortTermTrade(trade.amount_currency_to_trade, trade.date,
                         trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)  }
-                .forEach { trade -> shortTradeHistoryRepository.save(trade) }
+                .forEach { trade ->
+                    run {
+                        log.info("Adding ${trade.tid} to store")
+                        shortTradeHistoryRepository.save(trade)
+                    }
+                }
 
         log.info("Saved ${publicTradeHistory.body.trades.size} in Public Trade History " +
                 "| credits: ${publicTradeHistory.body.credits}")
@@ -77,7 +82,7 @@ open class Gatherer(
     /**
      * Collects the current BUY offers and stores the raw data.
      */
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedRate = 15000)
     fun buy() {
         val showOrderbook = showOrderbook.buy()
 
@@ -94,7 +99,7 @@ open class Gatherer(
     /**
      * Collects the current SELL offers and stores the raw data.
      */
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedRate = 15000)
     fun sell() {
         val showOrderbook = showOrderbook.sell()
 
@@ -109,7 +114,7 @@ open class Gatherer(
     }
 
     private fun fixNumberFormatting(showOrderbook: Response<ShowOrderbookBody>): List<Order> {
-        val updatedOrderList = showOrderbook.body.orders
+        return showOrderbook.body.orders
                 .map { order ->
                     Order(
                             order.is_external_wallet_order,
@@ -126,13 +131,11 @@ open class Gatherer(
                             order.type
                     )
                 }.toList()
-        return updatedOrderList
     }
 
     /**
      * Extracts the most relevant fields and stores them separately.
      */
-    @Async
     open fun flattenBuy(buyOrderbook: BuyOrderbook) {
 
         buyOrderbook.orders
@@ -149,7 +152,6 @@ open class Gatherer(
     /**
      * Extracts the most relevant fields and stores them separately.
      */
-    @Async
     open fun flattenSell(sellOrderbook: SellOrderbook) {
 
         sellOrderbook.orders
