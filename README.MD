@@ -5,6 +5,13 @@ You need to specify the access tokens for Bitcoin.de
 apiKey  
 apiSecret  
 
+### Package to Jar
+Skip tests to package Jar
+`mvn clean package -DskipTests`
+
+### MongoDB
+Start your MongoDB: 
+`docker run -p 27017:27017 mongo`
 
 ### Self-hosting
 You can host all of your infrastructure yourself. For a full setup, you need
@@ -35,6 +42,96 @@ Any vhost should do. I'm using the free tier of
 1. Add a [.htaccess](https://davidwalsh.name/password-protect-directory-using-htaccess) to /var/www/html to protect your front end ([more information on EC2](https://stackoverflow.com/a/25634496/6500730))
 1. Add [port forwarding](https://stackoverflow.com/questions/17161345/how-to-open-a-web-server-port-on-ec2-instance) to port 8080
 1. Add [TLS to your AWS instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SSL-on-amazon-linux-2.html)
+
+### Provision server
+You need a server with a proper CPU for this. If you do not have access to a proper machine,
+start by disabling `Gatherer.shortTermPublicTradeHistory()` and choose a more relaxed the scheduling.
+Use `top` and see your CPU and RAM load during execution.
+
+I use a dedicated server with CentOS with the following setup:
+
+#### Basic installation
+```
+yum update
+yum install nano
+yum install java-11-openjdk-devel
+```
+
+#### MongoDB installation (without docker)
+Add the MongoDB repository to the yum packet manager. Create the file
+```
+nano /etc/yum.repos.d/mongodb-org.repo
+```
+and add the configuration
+```
+[mongodb-org-3.4]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+``` 
+Install MongoDB using yum
+```
+yum install mongodb-org
+```
+Start MongoDB
+```
+systemctl start mongod
+systemctl enable mongod
+```
+
+It is highly recommended that you [secure your MongoDB](https://www.cyberciti.biz/faq/how-to-secure-mongodb-nosql-production-database/)!
+
+#### Application setup
+We want to start the service as a daemon. Move the application to `/opt/bitcoin/backend-0.0.1-SNAPSHOT.jar` and the configuration to 
+`/opt/bitcoin/config/configuration.yml` if you want to just copy paste the setup.
+
+To add the service to the systemd discovery, create the file
+```
+nano /lib/systemd/system/bitcoin.service
+```
+and add the configuration
+```
+[Unit]
+Description=Bitcoin Java Process Restart Upstart Script
+After=auditd.service systemd-user-sessions.service time-sync.target
+ 
+[Service]
+User=root
+TimeoutStartSec=0
+Type=simple
+KillMode=process
+WorkingDirectory=/opt/bitcoin
+ExecStart=/bin/sh -c "exec java -jar /opt/bitcoin/backend-0.0.1-SNAPSHOT.jar -Dspring.config.location=config/credentials.yml"
+LimitNOFILE=5555
+ 
+[Install]
+WantedBy=multi-user.target
+```
+Reload systemd and start the daemon
+```
+systemctl daemon-reload
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
