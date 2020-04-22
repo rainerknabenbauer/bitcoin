@@ -40,6 +40,15 @@ open class Gatherer(
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
     /**
+     * Basic health output on command line. Useful for debugging potential performance issues.
+     */
+    @Scheduled(cron = "* * * * * *")
+    @Async
+    open fun health() {
+        log.info("Health check")
+    }
+
+    /**
      * Collects the Public Trade History and appends it to the current log once a day.
      */
     @Scheduled(cron = "0 0 0 * * *")
@@ -59,7 +68,7 @@ open class Gatherer(
     /**
      * Collects the last 24 hours every minute.
      */
-    @Scheduled(cron = "0 * * * * *" )
+    @Scheduled(cron = "0 */10 * * * *" )
     fun shortTermPublicTradeHistory() {
 
         shortTradeHistoryRepository.deleteAll()
@@ -70,7 +79,6 @@ open class Gatherer(
                         trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)  }
                 .forEach { trade ->
                     run {
-                        log.info("Adding ${trade.tid} to store")
                         shortTradeHistoryRepository.save(trade)
                     }
                 }

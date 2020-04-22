@@ -35,12 +35,9 @@ abstract class Transaction<T> : Authentication {
         var finished = false
         while (!finished) {
             finished = try {
-                log.info("Entering sleep state")
                 Thread.sleep(1_100)
-                log.info("Exiting sleep state")
                 true
             } catch (e: InterruptedException) {
-                log.info("Thread sleep was interrupted")
                 false
             }
         }
