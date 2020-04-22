@@ -29,7 +29,7 @@ open class Mailer(
     /**
      * Sends the current state of affairs once a day.
      */
-    @Scheduled(fixedRate = 15000)
+    @Scheduled(cron = "0 0 5 * * *")
     @Async
     open fun sendDailyNewsletter() {
 
@@ -62,7 +62,7 @@ open class Mailer(
 
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient))
             msg.subject = "Tutorials point email"
-            msg.setContent(message, "text/html")
+            msg.setContent(message, "text/html; charset=UTF-8")
             msg.sentDate = Date()
 
             Transport.send(msg)
