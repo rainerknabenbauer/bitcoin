@@ -1,43 +1,28 @@
 ## Bitcoin Automat
 
-### Environment
-You need to specify the access tokens for Bitcoin.de  
-apiKey  
-apiSecret  
-
 ### Package to Jar
 Skip tests to package Jar
 `mvn clean package -DskipTests`
 
 ### MongoDB
-Start your MongoDB: 
+Start your local MongoDB: 
 `docker run -p 27017:27017 mongo`
 
 ### Self-hosting
 You can host all of your infrastructure yourself. For a full setup, you need
 * A PHP capable web space for hosting the Bitcoin.de SDK
-* A HTML web space for hosting the Vue.js UI
-* A virtual machine to host the Kotlin backend
+* A HTML web space (Apache server) for hosting the Vue.js UI
+* A virtual machine to host the Kotlin backend (JVM)
 
 ##### SDK : PHP
 I'm using all-inkl.com. Any web host with a free tier supporting PHP should do.
 
 ##### UI : HTML
-This should be hosted on the same machine as the backend.
-The backend should not publicly disclose the trading endpoints.
-That's why we need the UI calling localhost endpoints - endpoints being protected by the firewall.
+Currently under construction. Trying new things with Vue.js
 
 * [Basic CRUD app with Vue.js](https://codesource.io/create-a-crud-application-using-vue-node-and-mongodb/)
 
 ##### Backend : Kotlin
-Any vhost should do. I'm using the free tier of 
-[Amazon EC2](https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=tier%2312monthsfree&awsm.page-all-free-tier=1).
-1. Install [MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-amazon/) on your EC2 instance
-1. Upload the backend jar to EC2 (I'm using [Filezilla](https://filezilla-project.org/))
-1. Install [screen](https://www.howtoforge.com/linux_screen) so we can let processes run in background
-1. Enter `screen` to start a new session
-1. Start the backend with `java -jar backend-0.0.1-SNAPSHOT.jar`
-1. Ctrl a d - Detaches a screen session (without killing the processes)
 1. Install [Apache on EC2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-lamp-amazon-linux-2.html)
 1. Add a [.htaccess](https://davidwalsh.name/password-protect-directory-using-htaccess) to /var/www/html to protect your front end ([more information on EC2](https://stackoverflow.com/a/25634496/6500730))
 1. Add [port forwarding](https://stackoverflow.com/questions/17161345/how-to-open-a-web-server-port-on-ec2-instance) to port 8080
@@ -48,7 +33,21 @@ You need a server with a proper CPU for this. If you do not have access to a pro
 start by disabling `Gatherer.shortTermPublicTradeHistory()` and choose a more relaxed the scheduling.
 Use `top` and see your CPU and RAM load during execution.
 
-I use a dedicated server with CentOS with the following setup:
+After experimenting with Amazon EC2 I quit because of pricing and performance, I went back to Hetzner
+and got the cheapest machine. The application always seemed to freeze after a couple of scheduled 
+executions. After some bugfixing I noticed the CPU load, which was constantly at >98%. So I upgraded 
+to a `Dedicated Root Server SB29`, currently running at 50% CPU max:
+* Intel Core i7-3770
+* 2x HDD SATA 3,0 TB
+* 2x RAM 8192 MB DDR3 
+
+As the Analyzer is still work in progress, we need some processing to calculate our trading decisions.
+
+_It is highly recommended_, that you start by checking your firewall settings! Currently the trading API does not require any authentication!
+For starters, you might want to consider blocking everything except for port 22.
+
+The server is running on CentOS with the following setup:
+
 
 #### Basic installation
 ```
@@ -81,7 +80,7 @@ systemctl start mongod
 systemctl enable mongod
 ```
 
-It is highly recommended that you [secure your MongoDB](https://www.cyberciti.biz/faq/how-to-secure-mongodb-nosql-production-database/)!
+_It is highly recommended_ that you [secure your MongoDB](https://www.cyberciti.biz/faq/how-to-secure-mongodb-nosql-production-database/)!
 
 #### Application setup
 We want to start the service as a daemon. Move the application to `/opt/bitcoin/backend-0.0.1-SNAPSHOT.jar` and the configuration to 
@@ -109,18 +108,71 @@ LimitNOFILE=5555
 [Install]
 WantedBy=multi-user.target
 ```
-Reload systemd and start the daemon
+Reload systemd and add the application to autostart
 ```
 systemctl daemon-reload
+systemctl enable bitcoin
 ```
 
+_It is highly recommended_, that you [add a custom user](https://www.digitalocean.com/community/tutorials/how-to-create-a-sudo-user-on-centos-quickstart) to execute the application!
 
+#### Configuration
+You need to specify the access tokens for Bitcoin.de and add a custom user
+to access the Rest API.
+Create a file `./config/credentials.yml` with
+```
+server:
+  port: 8888
 
+bitcoin:
+  apiKey: CUSTOMIZE
+  apiSecret: CUSTOMIZE
 
+default:
+  user: CUSTOMIZE
+  password: CUSTOMIZE
 
+spring:
+  profiles:
+    active: dev
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017
+      database: bitcoin
 
+---
+spring:
+  profiles: dev
+api:
+  isLive: false
 
+---
+spring:
+  profiles: prod
+api:
+  isLive: true
+```
 
+### Start the application
+
+We're all set! You can easily start the application by using the typical on board methods.
+```
+systemctl start bitcoin
+```
+
+### Useful commands
+List all running java processes
+```
+ps -few | grep java
+```
+Show current application log (live)
+```
+journalctl -f
+```
+Show full log
+```
+journalctl -u bitcoin.service --no-pager
+```
 
 
 
