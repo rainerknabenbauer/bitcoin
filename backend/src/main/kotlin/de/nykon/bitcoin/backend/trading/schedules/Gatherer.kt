@@ -17,7 +17,6 @@ import de.nykon.bitcoin.sdk.bitcoinDe.ShowPublicTradeHistory
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.showOrderbook.Order
 import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
@@ -41,42 +40,44 @@ open class Gatherer(
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
     /**
-     * Basic health output on command line. Useful for debugging potential performance issues.
+     * Collects the Public Trade History and appends it to the current log once a day.
      */
-    @Scheduled(cron = "0 * * * * *")
-    @Async
-    open fun health() {
-        log.info("Health check (minutely)")
+    @Scheduled(cron = "0 0 0 * * *")
+    fun longTermPublicTradeHistory() {
+
+        val publicTradeHistory = showPublicTradeHistory.all()
+
+        publicTradeHistory.body.trades
+                .map { trade -> LongTermTrade(trade.amount_currency_to_trade, trade.date,
+                        trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)  }
+                .forEach { trade -> longTradeHistoryRepository.save(trade) }
+
+        log.info("Saved ${publicTradeHistory.body.trades.size} in Public Trade History " +
+                "| credits: ${publicTradeHistory.body.credits}")
     }
 
     /**
-     * Collects the public trade history.
+     * Collects the last 24 hours every minute.
      */
-    @Scheduled(cron = "0 * * * * *" )
+    @Scheduled(cron = "0 */5 * * * *" )
     fun shortTermPublicTradeHistory() {
 
         shortTradeHistoryRepository.deleteAll()
         val publicTradeHistory = showPublicTradeHistory.all()
 
-        val tradeHistory = publicTradeHistory.body.trades.subList(0, 1000)
-                .map { trade ->
-                    ShortTermTrade(trade.amount_currency_to_trade, trade.date,
-                            trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)
-                }
-                .toList()
+        publicTradeHistory.body.trades.subList(0, 250)
+                .map { trade -> ShortTermTrade(trade.amount_currency_to_trade, trade.date,
+                        trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)  }
+                .forEach { trade -> shortTradeHistoryRepository.save(trade) }
 
-        shortTradeHistoryRepository.saveAll(tradeHistory)
-
-        //TODO Auswertung in die Datenbank schreiben, nicht mehr alle Daten einzeln schreiben
-
-        log.info("Collected ${publicTradeHistory.body.trades.size} in Public Trade History " +
+        log.info("Saved ${publicTradeHistory.body.trades.size} in Public Trade History " +
                 "| credits: ${publicTradeHistory.body.credits}")
     }
 
     /**
      * Collects the current BUY offers and stores the raw data.
      */
-    @Scheduled(fixedRate = 15000)
+    @Scheduled(fixedDelay = 15000)
     fun buy() {
         val showOrderbook = showOrderbook.buy()
 
@@ -84,8 +85,6 @@ open class Gatherer(
 
         val buyOrderbook = BuyOrderbook(LocalDateTime.now(), updatedOrderList)
         buyOrderbookRepository.save(buyOrderbook)
-
-        //TODO Auswertung in die Datenbank schreiben, nicht mehr alle Daten einzeln schreiben
 
         log.info("Saved Raw Buy Orderbook | credits: ${showOrderbook.body.credits}")
 
@@ -95,7 +94,7 @@ open class Gatherer(
     /**
      * Collects the current SELL offers and stores the raw data.
      */
-    @Scheduled(fixedRate = 15000)
+    @Scheduled(fixedDelay = 15000)
     fun sell() {
         val showOrderbook = showOrderbook.sell()
 
@@ -110,7 +109,7 @@ open class Gatherer(
     }
 
     private fun fixNumberFormatting(showOrderbook: Response<ShowOrderbookBody>): List<Order> {
-        return showOrderbook.body.orders
+        val updatedOrderList = showOrderbook.body.orders
                 .map { order ->
                     Order(
                             order.is_external_wallet_order,
@@ -127,11 +126,13 @@ open class Gatherer(
                             order.type
                     )
                 }.toList()
+        return updatedOrderList
     }
 
     /**
      * Extracts the most relevant fields and stores them separately.
      */
+    @Async
     open fun flattenBuy(buyOrderbook: BuyOrderbook) {
 
         buyOrderbook.orders
@@ -148,6 +149,7 @@ open class Gatherer(
     /**
      * Extracts the most relevant fields and stores them separately.
      */
+    @Async
     open fun flattenSell(sellOrderbook: SellOrderbook) {
 
         sellOrderbook.orders
