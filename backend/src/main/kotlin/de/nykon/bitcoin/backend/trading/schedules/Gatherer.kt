@@ -17,6 +17,7 @@ import de.nykon.bitcoin.sdk.bitcoinDe.ShowPublicTradeHistory
 import de.nykon.bitcoin.sdk.value.Response
 import de.nykon.bitcoin.sdk.value.showOrderbook.Order
 import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
@@ -42,48 +43,33 @@ open class Gatherer(
     /**
      * Basic health output on command line. Useful for debugging potential performance issues.
      */
-    @Scheduled(cron = "* * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Async
     open fun health() {
-        log.info("Health check")
+        log.info("Health check (minutely)")
     }
 
     /**
-     * Collects the Public Trade History and appends it to the current log once a day.
+     * Collects the public trade history.
      */
-    @Scheduled(cron = "0 0 0 * * *")
-    fun longTermPublicTradeHistory() {
-
-        val publicTradeHistory = showPublicTradeHistory.all()
-
-        publicTradeHistory.body.trades
-                .map { trade -> LongTermTrade(trade.amount_currency_to_trade, trade.date,
-                        trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)  }
-                .forEach { trade -> longTradeHistoryRepository.save(trade) }
-
-        log.info("Saved ${publicTradeHistory.body.trades.size} in Public Trade History " +
-                "| credits: ${publicTradeHistory.body.credits}")
-    }
-
-    /**
-     * Collects the last 24 hours every minute.
-     */
-    @Scheduled(cron = "0 */10 * * * *" )
+    @Scheduled(cron = "0 * * * * *" )
     fun shortTermPublicTradeHistory() {
 
         shortTradeHistoryRepository.deleteAll()
         val publicTradeHistory = showPublicTradeHistory.all()
 
-        publicTradeHistory.body.trades
-                .map { trade -> ShortTermTrade(trade.amount_currency_to_trade, trade.date,
-                        trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)  }
-                .forEach { trade ->
-                    run {
-                        shortTradeHistoryRepository.save(trade)
-                    }
+        val tradeHistory = publicTradeHistory.body.trades.subList(0, 1000)
+                .map { trade ->
+                    ShortTermTrade(trade.amount_currency_to_trade, trade.date,
+                            trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)
                 }
+                .toList()
 
-        log.info("Saved ${publicTradeHistory.body.trades.size} in Public Trade History " +
+        shortTradeHistoryRepository.saveAll(tradeHistory)
+
+        //TODO Auswertung in die Datenbank schreiben, nicht mehr alle Daten einzeln schreiben
+
+        log.info("Collected ${publicTradeHistory.body.trades.size} in Public Trade History " +
                 "| credits: ${publicTradeHistory.body.credits}")
     }
 
@@ -98,6 +84,8 @@ open class Gatherer(
 
         val buyOrderbook = BuyOrderbook(LocalDateTime.now(), updatedOrderList)
         buyOrderbookRepository.save(buyOrderbook)
+
+        //TODO Auswertung in die Datenbank schreiben, nicht mehr alle Daten einzeln schreiben
 
         log.info("Saved Raw Buy Orderbook | credits: ${showOrderbook.body.credits}")
 

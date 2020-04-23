@@ -61,7 +61,7 @@ open class Mailer(
         recipients.forEach {recipient ->
 
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient))
-            msg.subject = "Tutorials point email"
+            msg.subject = "Daily bitcoin"
             msg.setContent(message, "text/html; charset=UTF-8")
             msg.sentDate = Date()
 
