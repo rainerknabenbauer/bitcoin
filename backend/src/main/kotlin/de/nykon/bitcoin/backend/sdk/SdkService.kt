@@ -1,6 +1,6 @@
 package de.nykon.bitcoin.backend.sdk
 
-import de.nykon.bitcoin.backend.trading.schedules.config.CommandConfig
+import de.nykon.bitcoin.backend.SdkConfig
 import de.nykon.bitcoin.backend.users.authentication.AuthenticationService
 import de.nykon.bitcoin.backend.users.value.Authentication
 import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class SdkService(
-        private val commandConfig: CommandConfig,
+        private val commandConfig: SdkConfig,
         private val authenticationService: AuthenticationService
 ) {
 
