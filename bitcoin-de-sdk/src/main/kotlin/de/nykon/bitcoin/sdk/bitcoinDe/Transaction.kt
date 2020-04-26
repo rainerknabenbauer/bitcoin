@@ -1,5 +1,6 @@
-package de.nykon.bitcoin.sdk
+package de.nykon.bitcoin.sdk.bitcoinDe
 
+import de.nykon.bitcoin.sdk.RestClient
 import de.nykon.bitcoin.sdk.value.Response
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
