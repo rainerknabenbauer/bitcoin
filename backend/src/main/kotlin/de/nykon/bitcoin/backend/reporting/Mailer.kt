@@ -16,6 +16,9 @@ import javax.mail.Transport
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
+/**
+ * Sends an eMail containing relevant information to stakeholders.
+ */
 @Component
 open class Mailer(
         private val showAccountInfo: ShowAccountInfo

@@ -27,17 +27,20 @@ import org.springframework.stereotype.Component
 import java.math.RoundingMode
 import java.time.LocalDateTime
 
+/**
+ * Collects data and stores it in the database for further processing.
+ */
 @Component
 open class Gatherer(
         private val showOrderbook: ShowOrderbook,
         private val showPublicTradeHistory: ShowPublicTradeHistory,
         private val shortTradeHistoryRepository: ShortTradeHistoryRepository,
         private val longTradeHistoryRepository: LongTradeHistoryRepository,
-        private val krakenSummary: KrakenSummary,
         private val buyOrderbookRepository: BuyOrderbookRepository,
         private val sellOrderbookRepository: SellOrderbookRepository,
         private val flattenBuyOrderbookRepository: FlattenBuyOrderbookRepository,
         private val flattenedSellOrderbookRepository: FlattenedSellOrderbookRepository,
+        private val krakenSummary: KrakenSummary,
         private val krakenSummaryRepository: KrakenSummaryRepository
 ) {
 
@@ -63,7 +66,7 @@ open class Gatherer(
     }
 
     /**
-     * Collects the last 24 hours every minute.
+     * Collects the last 24 hours of public trades.
      */
     @Scheduled(cron = "0 */5 * * * *" )
     fun shortTermPublicTradeHistory() {
@@ -71,7 +74,7 @@ open class Gatherer(
         shortTradeHistoryRepository.deleteAll()
         val publicTradeHistory = showPublicTradeHistory.all()
 
-        publicTradeHistory.body.trades.subList(0, 250)
+        publicTradeHistory.body.trades
                 .map { trade ->
                     ShortTermTrade(trade.amount_currency_to_trade, trade.date,
                             trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)

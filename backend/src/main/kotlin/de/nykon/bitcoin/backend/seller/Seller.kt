@@ -16,6 +16,10 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+/**
+ * Once activated, it creates a SELL offer for all available bitcoins.
+ * It periodically fetches the current price and updates the offer.
+ */
 @Component
 class Seller(
         private val config: SellerSchedulConfig,

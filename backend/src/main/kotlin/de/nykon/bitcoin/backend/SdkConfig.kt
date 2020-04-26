@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+/**
+ * Configures the beans from the SDK and provides them to the Spring container.
+ */
 @Configuration
 open class SdkConfig {
 
