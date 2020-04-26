@@ -1,7 +1,7 @@
 package de.nykon.bitcoin.backend.gatherer.value
 
-import de.nykon.bitcoin.sdk.value.showPublicTradeHistory.ShowPublicTradeHistoryBody
-import de.nykon.bitcoin.sdk.value.showPublicTradeHistory.Trade
+import de.nykon.bitcoin.sdk.value.bitcoinde.showPublicTradeHistory.ShowPublicTradeHistoryBody
+import de.nykon.bitcoin.sdk.value.bitcoinde.showPublicTradeHistory.Trade
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "snapshotPublicTradeHistory")

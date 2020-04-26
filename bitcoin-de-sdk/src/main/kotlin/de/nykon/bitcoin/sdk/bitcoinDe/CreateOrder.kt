@@ -1,9 +1,9 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
 import com.google.gson.GsonBuilder
-import de.nykon.bitcoin.sdk.value.Response
-import de.nykon.bitcoin.sdk.value.TransactionType
-import de.nykon.bitcoin.sdk.value.createOrder.CreateOrderBody
+import de.nykon.bitcoin.sdk.value.bitcoinde.Response
+import de.nykon.bitcoin.sdk.value.bitcoinde.TransactionType
+import de.nykon.bitcoin.sdk.value.bitcoinde.createOrder.CreateOrderBody
 import java.math.BigDecimal
 
 open class CreateOrder(
@@ -60,7 +60,7 @@ open class CreateOrder(
         return GsonBuilder().create().fromJson(body, CreateOrderBody::class.java)
     }
 
-    fun tradeMinimumReached(price: BigDecimal, amount: BigDecimal): Boolean {
+    private fun tradeMinimumReached(price: BigDecimal, amount: BigDecimal): Boolean {
         return price.multiply(amount) >= tradeMinimum
     }
 }

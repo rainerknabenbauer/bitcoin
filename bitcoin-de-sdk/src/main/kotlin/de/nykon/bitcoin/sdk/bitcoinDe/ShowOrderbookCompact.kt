@@ -1,8 +1,8 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
 import com.google.gson.GsonBuilder
-import de.nykon.bitcoin.sdk.value.Response
-import de.nykon.bitcoin.sdk.value.showOrderbookCompact.ShowOrderbookCompactBody
+import de.nykon.bitcoin.sdk.value.bitcoinde.Response
+import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbookCompact.ShowOrderbookCompactBody
 
 open class ShowOrderbookCompact(
         override val apiKey: String,

@@ -1,9 +1,9 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
 import com.google.gson.GsonBuilder
-import de.nykon.bitcoin.sdk.value.Response
-import de.nykon.bitcoin.sdk.value.deleteOrder.DeleteOrderBody
-import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
+import de.nykon.bitcoin.sdk.value.bitcoinde.Response
+import de.nykon.bitcoin.sdk.value.bitcoinde.deleteOrder.DeleteOrderBody
+import de.nykon.bitcoin.sdk.value.bitcoinde.deleteOrder.OrderId
 
 open class DeleteOrder(
         override val apiKey: String,

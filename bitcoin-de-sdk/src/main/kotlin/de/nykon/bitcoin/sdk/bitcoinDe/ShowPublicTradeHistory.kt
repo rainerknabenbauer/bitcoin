@@ -1,8 +1,8 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
 import com.google.gson.GsonBuilder
-import de.nykon.bitcoin.sdk.value.Response
-import de.nykon.bitcoin.sdk.value.showPublicTradeHistory.ShowPublicTradeHistoryBody
+import de.nykon.bitcoin.sdk.value.bitcoinde.Response
+import de.nykon.bitcoin.sdk.value.bitcoinde.showPublicTradeHistory.ShowPublicTradeHistoryBody
 
 class ShowPublicTradeHistory(
         override val apiKey: String,

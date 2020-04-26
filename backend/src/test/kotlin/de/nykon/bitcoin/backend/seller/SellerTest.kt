@@ -6,10 +6,10 @@ import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
-import de.nykon.bitcoin.sdk.value.Response
-import de.nykon.bitcoin.sdk.value.TransactionType
-import de.nykon.bitcoin.sdk.value.showOrderbook.Order
-import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
+import de.nykon.bitcoin.sdk.value.bitcoinde.Response
+import de.nykon.bitcoin.sdk.value.bitcoinde.TransactionType
+import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.Order
+import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.ShowOrderbookBody
 import org.assertj.core.api.SoftAssertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

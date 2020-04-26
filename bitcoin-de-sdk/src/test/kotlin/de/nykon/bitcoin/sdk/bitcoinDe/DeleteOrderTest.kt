@@ -1,6 +1,6 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
-import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
+import de.nykon.bitcoin.sdk.value.bitcoinde.deleteOrder.OrderId
 import org.assertj.core.api.SoftAssertions
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals

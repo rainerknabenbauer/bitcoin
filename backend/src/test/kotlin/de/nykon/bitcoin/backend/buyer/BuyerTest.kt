@@ -6,7 +6,7 @@ import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
-import de.nykon.bitcoin.sdk.value.showAccountInfo.FidorReservation
+import de.nykon.bitcoin.sdk.value.bitcoinde.showAccountInfo.FidorReservation
 import org.assertj.core.api.SoftAssertions
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

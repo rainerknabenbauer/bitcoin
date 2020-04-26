@@ -1,7 +1,7 @@
 package de.nykon.bitcoin.sdk.bitcoinDe
 
 import de.nykon.bitcoin.sdk.RestClient
-import de.nykon.bitcoin.sdk.value.Response
+import de.nykon.bitcoin.sdk.value.bitcoinde.Response
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -16,7 +16,7 @@ abstract class Transaction<T>: Authentication {
 
     fun execute(json: String): Response<T> {
 
-        var restClient = RestClient()
+        val restClient = RestClient()
 
         val receive = restClient.post(uri, json)
 

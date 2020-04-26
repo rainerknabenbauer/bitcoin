@@ -5,11 +5,11 @@ import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
-import de.nykon.bitcoin.sdk.value.Response
-import de.nykon.bitcoin.sdk.value.deleteOrder.OrderId
-import de.nykon.bitcoin.sdk.value.showAccountInfo.FidorReservation
-import de.nykon.bitcoin.sdk.value.showMyOrders.ShowMyOrdersBody
-import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
+import de.nykon.bitcoin.sdk.value.bitcoinde.Response
+import de.nykon.bitcoin.sdk.value.bitcoinde.deleteOrder.OrderId
+import de.nykon.bitcoin.sdk.value.bitcoinde.showAccountInfo.FidorReservation
+import de.nykon.bitcoin.sdk.value.bitcoinde.showMyOrders.ShowMyOrdersBody
+import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.ShowOrderbookBody
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled

@@ -14,9 +14,9 @@ import de.nykon.bitcoin.backend.gatherer.value.SellOrderbook
 import de.nykon.bitcoin.backend.gatherer.value.ShortTermTrade
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowPublicTradeHistory
-import de.nykon.bitcoin.sdk.value.Response
-import de.nykon.bitcoin.sdk.value.showOrderbook.Order
-import de.nykon.bitcoin.sdk.value.showOrderbook.ShowOrderbookBody
+import de.nykon.bitcoin.sdk.value.bitcoinde.Response
+import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.Order
+import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.ShowOrderbookBody
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
