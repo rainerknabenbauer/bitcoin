@@ -3,6 +3,7 @@ package de.nykon.bitcoin.backend.gatherer
 import de.nykon.bitcoin.backend.gatherer.repository.BuyOrderbookRepository
 import de.nykon.bitcoin.backend.gatherer.repository.FlattenBuyOrderbookRepository
 import de.nykon.bitcoin.backend.gatherer.repository.FlattenedSellOrderbookRepository
+import de.nykon.bitcoin.backend.gatherer.repository.KrakenSummaryRepository
 import de.nykon.bitcoin.backend.gatherer.repository.LongTradeHistoryRepository
 import de.nykon.bitcoin.backend.gatherer.repository.SellOrderbookRepository
 import de.nykon.bitcoin.backend.gatherer.repository.ShortTradeHistoryRepository
@@ -14,6 +15,7 @@ import de.nykon.bitcoin.backend.gatherer.value.SellOrderbook
 import de.nykon.bitcoin.backend.gatherer.value.ShortTermTrade
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowPublicTradeHistory
+import de.nykon.bitcoin.sdk.cryptowatch.KrakenSummary
 import de.nykon.bitcoin.sdk.value.bitcoinde.Response
 import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.Order
 import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.ShowOrderbookBody
@@ -31,10 +33,12 @@ open class Gatherer(
         private val showPublicTradeHistory: ShowPublicTradeHistory,
         private val shortTradeHistoryRepository: ShortTradeHistoryRepository,
         private val longTradeHistoryRepository: LongTradeHistoryRepository,
+        private val krakenSummary: KrakenSummary,
         private val buyOrderbookRepository: BuyOrderbookRepository,
         private val sellOrderbookRepository: SellOrderbookRepository,
         private val flattenBuyOrderbookRepository: FlattenBuyOrderbookRepository,
-        private val flattenedSellOrderbookRepository: FlattenedSellOrderbookRepository
+        private val flattenedSellOrderbookRepository: FlattenedSellOrderbookRepository,
+        private val krakenSummaryRepository: KrakenSummaryRepository
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -164,6 +168,16 @@ open class Gatherer(
                 }.forEach { order -> flattenedSellOrderbookRepository.save(order) }
 
         log.info("Saved Compact Sell Orderbook")
+    }
+
+    /**
+     * Collects the summary of Kraken BTC.
+     */
+    @Scheduled(fixedDelay = 60000)
+    fun kraken() {
+
+        val summary = krakenSummary.execute()
+        krakenSummaryRepository.save(summary.body)
     }
 
 }
