@@ -6,7 +6,7 @@ package de.nykon.bitcoin.sdk.value.bitcoinde.showMyTrades
  * @see TradingApiSdkV4::SHOW_MY_TRADES_PARAMETER_STATE
  */
 enum class TradeState(val value: String) {
-    CANCELLED("1"),
+    CANCELLED("-1"),
     PENDING("0"),
-    SUCCESSFUL("0")
+    SUCCESSFUL("1")
 }

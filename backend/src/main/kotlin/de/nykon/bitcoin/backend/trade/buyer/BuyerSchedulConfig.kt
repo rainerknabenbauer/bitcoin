@@ -1,14 +1,14 @@
-package de.nykon.bitcoin.backend.seller
+package de.nykon.bitcoin.backend.trade.buyer
+
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class SellerSchedulConfig {
+open class BuyerSchedulConfig {
 
     var isActive = false
-    val consideredOrderSize = 5
+    val consideredOrderSize = 3
 
     @Value(value = "\${api.isLive}")
     var isLiveChange: Boolean = false
-
 }

@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.backend.seller
+package de.nykon.bitcoin.backend.trade.seller
 
 import com.nhaarman.mockito_kotlin.mock
 import de.nykon.bitcoin.sdk.bitcoinDe.CreateOrder

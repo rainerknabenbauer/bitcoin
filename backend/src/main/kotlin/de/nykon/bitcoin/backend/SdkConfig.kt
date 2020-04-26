@@ -4,6 +4,7 @@ import de.nykon.bitcoin.sdk.bitcoinDe.CreateOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyTrades
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowPublicTradeHistory
 import de.nykon.bitcoin.sdk.cryptowatch.KrakenSummary
@@ -51,6 +52,11 @@ open class SdkConfig {
     @Bean
     open fun createOrder(): CreateOrder {
         return CreateOrder(apiKey, apiSecret)
+    }
+
+    @Bean
+    open fun showMyTrades(): ShowMyTrades {
+        return ShowMyTrades(apiKey, apiSecret)
     }
 
     @Bean

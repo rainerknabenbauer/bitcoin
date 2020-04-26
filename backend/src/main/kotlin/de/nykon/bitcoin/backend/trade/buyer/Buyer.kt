@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.backend.buyer
+package de.nykon.bitcoin.backend.trade.buyer
 
 import de.nykon.bitcoin.sdk.bitcoinDe.CreateOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder

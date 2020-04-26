@@ -1,6 +1,6 @@
 package de.nykon.bitcoin.backend.api
 
-import de.nykon.bitcoin.backend.buyer.BuyerSchedulConfig
+import de.nykon.bitcoin.backend.trade.buyer.BuyerSchedulConfig
 import de.nykon.bitcoin.backend.sdk.SdkService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

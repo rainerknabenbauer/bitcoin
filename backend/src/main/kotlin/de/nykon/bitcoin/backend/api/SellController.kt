@@ -1,7 +1,7 @@
 package de.nykon.bitcoin.backend.api
 
 import de.nykon.bitcoin.backend.sdk.SdkService
-import de.nykon.bitcoin.backend.seller.SellerSchedulConfig
+import de.nykon.bitcoin.backend.trade.seller.SellerSchedulConfig
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
