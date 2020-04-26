@@ -16,8 +16,14 @@ import javax.mail.internet.MimeMessage
 @SpringBootTest
 open class MailTest {
 
-    @Value("\${recipients}")
+    @Value("\${mail.recipients}")
     private lateinit var recipients: String
+
+    @Value("\${spring.mail.username}")
+    private lateinit var username: String
+
+    @Value("\${spring.mail.password}")
+    private lateinit var password: String
 
     @Test
     fun `demo send mail`() {
@@ -30,18 +36,18 @@ open class MailTest {
 
         val session: Session = Session.getInstance(props, object : Authenticator() {
             override fun getPasswordAuthentication(): PasswordAuthentication {
-                return PasswordAuthentication("btc@nykon.de", "B5g3dLr4REgJvRNu")
+                return PasswordAuthentication(username, password)
             }
         })
         val msg: Message = MimeMessage(session)
-        msg.setFrom(InternetAddress("btc@nykon.de", false))
+        msg.setFrom(InternetAddress(username, false))
 
         val json = this::class.java.getResource("/mail.html").readText(Charsets.UTF_8)
 
         recipients.split(",").forEach {recipient ->
 
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient))
-            msg.subject = "Tutorials point email"
+            msg.subject = "Test eMail"
             msg.setContent(json, "text/html")
             msg.sentDate = Date()
 

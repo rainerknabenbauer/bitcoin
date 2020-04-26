@@ -23,8 +23,14 @@ open class Mailer(
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    @Value("\${recipients}")
+    @Value("\${mail.recipients}")
     private lateinit var recipients: String
+
+    @Value("\${spring.mail.username}")
+    private lateinit var username: String
+
+    @Value("\${spring.mail.password}")
+    private lateinit var password: String
 
     /**
      * Sends the current state of affairs once a day.
@@ -50,7 +56,7 @@ open class Mailer(
 
         val session: Session = Session.getInstance(props, object : Authenticator() {
             override fun getPasswordAuthentication(): PasswordAuthentication {
-                return PasswordAuthentication("btc@nykon.de", "B5g3dLr4REgJvRNu")
+                return PasswordAuthentication(username, password)
             }
         })
         val msg: Message = MimeMessage(session)
