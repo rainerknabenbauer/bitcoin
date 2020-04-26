@@ -5,17 +5,24 @@ $home_ip = '95.91.237.21';
 
 if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || 1==1) {
 
-    $json = file_get_contents('php://input');    
+    $json = file_get_contents('php://input');
     $request_body = json_decode($json);
 
     $api_key    = $request_body->api_key;
     $api_secret = $request_body->api_secret;
+    $start      = $request_body->start;
+    $state      = $request_body->state;
 
-    if (!empty($api_key) && !empty($api_secret)) {
+    if (!empty($api_key) && !empty($api_secret) && !empty($start)) {
 
         $trading_api_sdk = new TradingApiSdkV4($api_key, $api_secret);
 
-        $response = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_SHOW_MY_ORDERS);
+        $response = $trading_api_sdk->doRequest(TradingApiSdkV4::METHOD_SHOW_MY_TRADES, [
+            TradingApiSdkV4::SHOW_MY_TRADES_PARAMETER_TRADING_PAIR   => TradingApiSdkV4::TRADING_PAIR_BTCEUR,
+            TradingApiSdkV4::SHOW_MY_TRADES_PARAMETER_DATE_START     => $start,
+            TradingApiSdkV4::SHOW_MY_TRADES_PARAMETER_STATE          => $state
+        ]);
+
         echo(json_encode($response));
 
     } else {

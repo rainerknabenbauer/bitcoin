@@ -32,5 +32,4 @@ class UserInitializer(private var userRepository: UserRepository) {
             userRepository.save(defaultUser)
         }
     }
-
 }
