@@ -7,8 +7,4 @@ import org.springframework.stereotype.Repository
 @Repository
 interface MyTradeRepository : MongoRepository<CompletedTrade, String> {
 
-    fun findAllByDateTime(): CompletedTrade?
-
-    fun findLastByDateTime(): CompletedTrade?
-
 }

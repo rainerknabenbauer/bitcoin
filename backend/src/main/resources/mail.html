@@ -3,12 +3,45 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 </head>
+
+<style>
+  body {
+    font-size: 12pt;
+  }
+  table {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  th {
+    text-align: center;
+  }
+  td {
+    text-align: center;
+    font-size: 10pt;
+  }
+</style>
+
 <body>
 
+<br><b>NEU</b> Jetzt siehst du die letzten Transaktionen, damit du weißt,
+bei welchem Kurs wir eingestiegen sind.
+<br>
+<br>Wir haben aktuell {{BITCOINS}} Bitcoins im Lager.
 <br>
 <br>
-<br>Wir haben {{BITCOINS}} Bitcoins.
 <br>
+<table>
+  <tr>
+    <th>Datum</th>
+    <th>Währung</th>
+    <th>Aktion</th>
+    <th>Kurs</th>
+    <th>Menge</th>
+    <th>Geldwert</th>
+  </tr>
+  {{TRANSACTION_ROW}}
+</table>
 <br>
 <br>Die Mail kommt jetzt jeden Morgen.
 <br>Wird Stück für Stück ausgebaut.

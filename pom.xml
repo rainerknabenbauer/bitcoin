@@ -15,7 +15,6 @@
   <modules>
     <module>bitcoin-de-sdk-value</module>
     <module>bitcoin-de-sdk</module>
-    <module>gatherer</module>
     <module>basics</module>
     <module>backend</module>
   </modules>
