@@ -23,7 +23,8 @@ if($_SERVER["REMOTE_ADDR"]==$server_ip || $_SERVER["REMOTE_ADDR"]==$home_ip || !
             TradingApiSdkV4::CREATE_ORDER_PARAMETER_TRADING_PAIR                    => TradingApiSdkV4::TRADING_PAIR_BTCEUR,
             TradingApiSdkV4::CREATE_ORDER_PARAMETER_TYPE                            => $type,
             TradingApiSdkV4::CREATE_ORDER_PARAMETER_PRICE                           => $price,
-            TradingApiSdkV4::CREATE_ORDER_PARAMETER_MAX_AMOUNT_CURRENCY_TO_TRADE    => $amount
+            TradingApiSdkV4::CREATE_ORDER_PARAMETER_MAX_AMOUNT_CURRENCY_TO_TRADE    => $amount,
+            TradingApiSdkV4::CREATE_ORDER_PARAMETER_MIN_AMOUNT_CURRENCY_TO_TRADE    => 0.01
         ]);
 
         echo(json_encode($response));
