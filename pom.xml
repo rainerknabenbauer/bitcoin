@@ -23,7 +23,7 @@
   <artifactId>bitcoin</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>bitcoin</name>
-  <description>Demo project for Spring Boot</description>
+  <description>Your automated bitcoin trader</description>
 
   <properties>
     <java.version>11</java.version>

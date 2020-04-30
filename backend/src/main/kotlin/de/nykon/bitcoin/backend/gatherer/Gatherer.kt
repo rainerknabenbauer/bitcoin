@@ -13,10 +13,16 @@ import de.nykon.bitcoin.backend.gatherer.value.FlattenedSellOrderbook
 import de.nykon.bitcoin.backend.gatherer.value.LongTermTrade
 import de.nykon.bitcoin.backend.gatherer.value.SellOrderbook
 import de.nykon.bitcoin.backend.gatherer.value.ShortTermTrade
+import de.nykon.bitcoin.backend.trade.MyTradeRepository
+import de.nykon.bitcoin.backend.trade.value.CompletedTrade
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyTrades
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowPublicTradeHistory
 import de.nykon.bitcoin.sdk.cryptowatch.KrakenSummary
+import de.nykon.bitcoin.sdk.value.CryptoCurrency
 import de.nykon.bitcoin.sdk.value.bitcoinde.Response
+import de.nykon.bitcoin.sdk.value.bitcoinde.TransactionType
+import de.nykon.bitcoin.sdk.value.bitcoinde.showMyTrades.TradeState
 import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.Order
 import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.ShowOrderbookBody
 import org.slf4j.Logger
@@ -26,6 +32,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.RoundingMode
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Collects data and stores it in the database for further processing.
@@ -34,17 +41,39 @@ import java.time.LocalDateTime
 open class Gatherer(
         private val showOrderbook: ShowOrderbook,
         private val showPublicTradeHistory: ShowPublicTradeHistory,
+        private val showMyTrades: ShowMyTrades,
         private val shortTradeHistoryRepository: ShortTradeHistoryRepository,
         private val longTradeHistoryRepository: LongTradeHistoryRepository,
         private val buyOrderbookRepository: BuyOrderbookRepository,
         private val sellOrderbookRepository: SellOrderbookRepository,
         private val flattenBuyOrderbookRepository: FlattenBuyOrderbookRepository,
         private val flattenedSellOrderbookRepository: FlattenedSellOrderbookRepository,
+        private val myTradeRepository: MyTradeRepository,
         private val krakenSummary: KrakenSummary,
         private val krakenSummaryRepository: KrakenSummaryRepository
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
+
+    @Scheduled(fixedDelay = 30000)
+    fun storeMyTrades() {
+        val startTime = LocalDateTime.now().minusSeconds(30)
+        val myTrades = showMyTrades.execute(startTime, TradeState.SUCCESSFUL)
+
+        myTrades.body.trades
+                .map { trade -> CompletedTrade(
+                        CryptoCurrency.BTC,
+                        LocalDateTime.parse(trade.successfully_finished_at, DateTimeFormatter.ISO_DATE_TIME),
+                        TransactionType.valueOf(trade.type.toUpperCase()),
+                        trade.price.setScale(2, RoundingMode.HALF_UP),
+                        trade.amount_currency_to_trade_after_fee.setScale(8, RoundingMode.HALF_UP),
+                        trade.volume_currency_to_pay.setScale(2, RoundingMode.HALF_UP)) }
+                .forEach {
+                    myTradeRepository.save(it)
+                }
+
+        log.info("Stored ${myTrades.body.trades.size} new trades.")
+    }
 
     /**
      * Collects the Public Trade History and appends it to the current log once a day.

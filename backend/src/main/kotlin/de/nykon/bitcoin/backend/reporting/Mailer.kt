@@ -80,7 +80,7 @@ open class Mailer(
     private fun send(recipients: List<String>, message: String) {
         val props = Properties()
         props["mail.smtp.auth"] = "true"
-        props["mail.smtp.starttls.enable"] = "true"
+        props["mail.smtp.starttls.enable"] = "false"
         props["mail.smtp.host"] = host
         props["mail.smtp.port"] = "587"
 
