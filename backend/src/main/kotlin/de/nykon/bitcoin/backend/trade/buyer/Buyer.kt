@@ -1,5 +1,7 @@
 package de.nykon.bitcoin.backend.trade.buyer
 
+import de.nykon.bitcoin.backend.trade.gatherer.repository.CompactBuyOrderbookRepository
+import de.nykon.bitcoin.backend.trade.gatherer.value.CompactSellOrderbook
 import de.nykon.bitcoin.sdk.bitcoinDe.CreateOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
@@ -28,11 +30,38 @@ class Buyer(
         private val showMyOrders: ShowMyOrders,
         private val showOrderbook: ShowOrderbook,
         private val deleteOrder: DeleteOrder,
-        private val createOrder: CreateOrder
+        private val createOrder: CreateOrder,
+        private val compactBuyOrderbookRepository: CompactBuyOrderbookRepository
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Triggers sale once target price is reached.
+     */
+    @Scheduled(fixedDelay = 30000)
+    fun buyOnceTargetPriceIsReached() {
+        if (inactiveBuyer()) {
+            val currentBuyOrders = compactBuyOrderbookRepository.findFirstByOrderByDateTimeDesc()
+
+            if (targetPriceReached(currentBuyOrders)) {
+                log.info("Weighted average ${currentBuyOrders.weightedAverage} is larger " +
+                        "than target price ${config.targetPrice}")
+            } else {
+                log.info("Automatic activation of Buyer! Weighted average " +
+                        "${currentBuyOrders.weightedAverage} is smaller than target price ${config.targetPrice}")
+                config.isActive = true
+            }
+        }
+    }
+
+    private fun inactiveBuyer() = !config.isActive
+    private fun targetPriceReached(currentSellOrder: CompactSellOrderbook) =
+            currentSellOrder.weightedAverage.compareTo(config.targetPrice) == 1
+
+    /**
+     * Buy coins until cash reservation is exhausted.
+     */
     @Scheduled(fixedDelay = 15000)
     fun buyCoins() {
 

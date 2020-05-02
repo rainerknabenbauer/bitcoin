@@ -42,14 +42,14 @@ class Seller(
     @Scheduled(fixedDelay = 30000)
     fun sellOnceTargetPriceIsReached() {
         if (inactiveSeller()) {
-            val currentSellOrder = compactSellOrderbookRepository.findFirstByOrderByDateTimeDesc()
+            val currentSellOrders = compactSellOrderbookRepository.findFirstByOrderByDateTimeDesc()
 
-            if (targetPriceReached(currentSellOrder)) {
+            if (targetPriceReached(currentSellOrders)) {
                 log.info("Automatic activation of Seller! Weighted average " +
-                        "${currentSellOrder.weightedAverage} is larger than target price ${config.targetPrice}")
+                        "${currentSellOrders.weightedAverage} is larger than target price ${config.targetPrice}")
                 config.isActive = true
             } else {
-                log.info("Weighted average ${currentSellOrder.weightedAverage} is smaller " +
+                log.info("Weighted average ${currentSellOrders.weightedAverage} is smaller " +
                         "than target price ${config.targetPrice}")
             }
         }

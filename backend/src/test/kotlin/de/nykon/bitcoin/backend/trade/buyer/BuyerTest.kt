@@ -1,11 +1,6 @@
 package de.nykon.bitcoin.backend.trade.buyer
 
-import com.nhaarman.mockito_kotlin.mock
-import de.nykon.bitcoin.sdk.bitcoinDe.CreateOrder
-import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
-import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
-import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.value.bitcoinde.showAccountInfo.FidorReservation
 import org.assertj.core.api.SoftAssertions
 import org.junit.jupiter.api.Assertions
@@ -20,14 +15,11 @@ internal class BuyerTest {
     @Autowired
     private lateinit var config: BuyerSchedulConfig
 
-    private var showAccountInfo: ShowAccountInfo = mock()
-    private var showMyOrders: ShowMyOrders = mock()
-    private var showOrderbook: ShowOrderbook = mock()
-    private var deleteOrder: DeleteOrder = mock()
-    private var createOrder: CreateOrder = mock()
+    @Autowired
+    private lateinit var testee: Buyer
 
-    private val apiKey = System.getenv("bitcoin.api.key")!!
-    private val apiSecret = System.getenv("bitcoin.api.secret")!!
+    @Autowired
+    private lateinit var showMyOrders: ShowMyOrders
 
     @Test
     fun `calculate amount of coins`() {
@@ -35,10 +27,6 @@ internal class BuyerTest {
         val fidorReservation = FidorReservation(BigDecimal.valueOf(100), "none", BigDecimal.valueOf(100), "none")
         val currentPrice = BigDecimal.valueOf(5900)
         val expected = BigDecimal.valueOf(0.01694915)
-
-        // act
-        val testee = Buyer(config, showAccountInfo, showMyOrders,
-                showOrderbook, deleteOrder, createOrder)
 
         val actual = testee.calculateAmountOfCoins(fidorReservation, currentPrice)
 
@@ -51,14 +39,9 @@ internal class BuyerTest {
     @Test
     fun `delete open orders`() {
         // arrange
-        val deleteOrder = DeleteOrder(apiKey, apiSecret)
-        val showMyOrders = ShowMyOrders(apiKey, apiSecret)
         val myOrders = showMyOrders.all()
 
         // act
-        val testee = Buyer(config, showAccountInfo, showMyOrders,
-                showOrderbook, deleteOrder, createOrder)
-
         testee.deleteOrders(myOrders)
 
         val noOrdersLeft = showMyOrders.all()
