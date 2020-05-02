@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.backend.gatherer.value
+package de.nykon.bitcoin.backend.trade.gatherer.value
 
 import de.nykon.bitcoin.sdk.value.bitcoinde.showPublicTradeHistory.ShowPublicTradeHistoryBody
 import de.nykon.bitcoin.sdk.value.bitcoinde.showPublicTradeHistory.Trade

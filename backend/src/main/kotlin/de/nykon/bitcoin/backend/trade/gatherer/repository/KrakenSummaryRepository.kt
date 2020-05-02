@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.backend.gatherer.repository
+package de.nykon.bitcoin.backend.trade.gatherer.repository
 
 import de.nykon.bitcoin.sdk.value.cryptowatch.summary.KrakenSummaryBody
 import org.springframework.data.mongodb.repository.MongoRepository

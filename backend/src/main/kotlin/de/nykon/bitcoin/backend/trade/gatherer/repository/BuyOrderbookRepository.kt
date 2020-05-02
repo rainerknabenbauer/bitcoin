@@ -1,6 +1,6 @@
-package de.nykon.bitcoin.backend.gatherer.repository
+package de.nykon.bitcoin.backend.trade.gatherer.repository
 
-import de.nykon.bitcoin.backend.gatherer.value.BuyOrderbook
+import de.nykon.bitcoin.backend.trade.gatherer.value.BuyOrderbook
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
 

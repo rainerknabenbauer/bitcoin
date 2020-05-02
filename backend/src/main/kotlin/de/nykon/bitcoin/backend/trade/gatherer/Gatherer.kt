@@ -1,28 +1,24 @@
-package de.nykon.bitcoin.backend.gatherer
+package de.nykon.bitcoin.backend.trade.gatherer
 
-import de.nykon.bitcoin.backend.gatherer.repository.BuyOrderbookRepository
-import de.nykon.bitcoin.backend.gatherer.repository.FlattenBuyOrderbookRepository
-import de.nykon.bitcoin.backend.gatherer.repository.FlattenedSellOrderbookRepository
-import de.nykon.bitcoin.backend.gatherer.repository.KrakenSummaryRepository
-import de.nykon.bitcoin.backend.gatherer.repository.LongTradeHistoryRepository
-import de.nykon.bitcoin.backend.gatherer.repository.SellOrderbookRepository
-import de.nykon.bitcoin.backend.gatherer.repository.ShortTradeHistoryRepository
-import de.nykon.bitcoin.backend.gatherer.value.BuyOrderbook
-import de.nykon.bitcoin.backend.gatherer.value.FlattenedBuyOrderbook
-import de.nykon.bitcoin.backend.gatherer.value.FlattenedSellOrderbook
-import de.nykon.bitcoin.backend.gatherer.value.LongTermTrade
-import de.nykon.bitcoin.backend.gatherer.value.SellOrderbook
-import de.nykon.bitcoin.backend.gatherer.value.ShortTermTrade
+import de.nykon.bitcoin.backend.trade.gatherer.repository.BuyOrderbookRepository
+import de.nykon.bitcoin.backend.trade.gatherer.repository.FlattenBuyOrderbookRepository
+import de.nykon.bitcoin.backend.trade.gatherer.repository.FlattenedSellOrderbookRepository
+import de.nykon.bitcoin.backend.trade.gatherer.repository.KrakenSummaryRepository
+import de.nykon.bitcoin.backend.trade.gatherer.repository.LongTradeHistoryRepository
+import de.nykon.bitcoin.backend.trade.gatherer.repository.SellOrderbookRepository
+import de.nykon.bitcoin.backend.trade.gatherer.repository.ShortTradeHistoryRepository
+import de.nykon.bitcoin.backend.trade.gatherer.value.BuyOrderbook
+import de.nykon.bitcoin.backend.trade.gatherer.value.FlattenedBuyOrderbook
+import de.nykon.bitcoin.backend.trade.gatherer.value.FlattenedSellOrderbook
+import de.nykon.bitcoin.backend.trade.gatherer.value.LongTermTrade
+import de.nykon.bitcoin.backend.trade.gatherer.value.SellOrderbook
+import de.nykon.bitcoin.backend.trade.gatherer.value.ShortTermTrade
 import de.nykon.bitcoin.backend.trade.MyTradeRepository
-import de.nykon.bitcoin.backend.trade.value.CompletedTrade
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyTrades
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowPublicTradeHistory
 import de.nykon.bitcoin.sdk.cryptowatch.KrakenSummary
-import de.nykon.bitcoin.sdk.value.CryptoCurrency
 import de.nykon.bitcoin.sdk.value.bitcoinde.Response
-import de.nykon.bitcoin.sdk.value.bitcoinde.TransactionType
-import de.nykon.bitcoin.sdk.value.bitcoinde.showMyTrades.TradeState
 import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.Order
 import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.ShowOrderbookBody
 import org.slf4j.Logger
@@ -32,7 +28,6 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.RoundingMode
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 /**
  * Collects data and stores it in the database for further processing.
@@ -55,10 +50,13 @@ open class Gatherer(
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     *
+
     @Scheduled(fixedDelay = 30000)
     fun storeMyTrades() {
-        val startTime = LocalDateTime.now().minusSeconds(30)
-        val myTrades = showMyTrades.execute(startTime, TradeState.SUCCESSFUL)
+        val lastTrade = myTradeRepository.findTopByDateTime(LocalDateTime.now())
+        val myTrades = showMyTrades.execute(lastTrade.dateTime, TradeState.SUCCESSFUL)
 
         myTrades.body.trades
                 .map { trade -> CompletedTrade(
@@ -74,6 +72,7 @@ open class Gatherer(
 
         log.info("Stored ${myTrades.body.trades.size} new trades.")
     }
+    */
 
     /**
      * Collects the Public Trade History and appends it to the current log once a day.

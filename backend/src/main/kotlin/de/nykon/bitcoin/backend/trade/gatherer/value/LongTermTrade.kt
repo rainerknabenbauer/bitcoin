@@ -1,4 +1,4 @@
-package de.nykon.bitcoin.backend.gatherer.value
+package de.nykon.bitcoin.backend.trade.gatherer.value
 
 import org.springframework.data.mongodb.core.mapping.Document
 import java.math.BigDecimal
