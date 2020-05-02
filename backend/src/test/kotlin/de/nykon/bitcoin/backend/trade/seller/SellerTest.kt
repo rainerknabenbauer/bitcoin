@@ -24,17 +24,23 @@ internal class SellerTest {
     @Autowired
     private lateinit var config: SellerSchedulConfig
 
-    private var showAccountInfo: ShowAccountInfo = mock()
-    private var showMyOrders: ShowMyOrders = mock()
-    private var showOrderbook: ShowOrderbook = mock()
-    private var deleteOrder: DeleteOrder = mock()
-    private var createOrder: CreateOrder = mock()
+    @Autowired
+    private lateinit var testee: Seller
+
+    @Test
+    fun `assef`() {
+        // arrange
+
+        // act
+        testee.sellOnceTargetPriceIsReached()
+
+        // assert
+
+    }
 
     @Test
     fun `deactive sell schedule once all coins are gone`() {
         // arrange
-        val testee = Seller(config, showAccountInfo, showMyOrders,
-                showOrderbook, deleteOrder, createOrder)
 
         // act
         testee.createOrder(BigDecimal.ZERO, BigDecimal.valueOf(1000), 0)
@@ -47,9 +53,6 @@ internal class SellerTest {
 
     @Test
     fun `calculate average price`() {
-        val testee = Seller(config, showAccountInfo, showMyOrders,
-                showOrderbook, deleteOrder, createOrder)
-
         // arrange
         val orders = Order.generate(5, 1100.0, 1500.0, TransactionType.SELL.name)
         val showOrderbookBody = ShowOrderbookBody(0, emptyList(), orders)

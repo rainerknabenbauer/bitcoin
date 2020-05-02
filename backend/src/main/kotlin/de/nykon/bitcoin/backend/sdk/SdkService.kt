@@ -21,8 +21,8 @@ class SdkService(
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    val showMyOrders = ShowMyOrders(commandConfig.apiKey, commandConfig.apiSecret)
-    val deleteOrder = DeleteOrder(commandConfig.apiKey, commandConfig.apiSecret)
+    private val showMyOrders = ShowMyOrders(commandConfig.apiKey, commandConfig.apiSecret)
+    private val deleteOrder = DeleteOrder(commandConfig.apiKey, commandConfig.apiSecret)
 
 
     fun showOrderbook(authentication: Authentication): ShowOrderbook? {

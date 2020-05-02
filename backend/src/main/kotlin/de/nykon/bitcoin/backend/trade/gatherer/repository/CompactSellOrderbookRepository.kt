@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface CompactSellOrderbookRepository : MongoRepository<CompactSellOrderbook, String> {
 
+    fun findFirstByOrderByDateTimeDesc(): CompactSellOrderbook
+
 }
