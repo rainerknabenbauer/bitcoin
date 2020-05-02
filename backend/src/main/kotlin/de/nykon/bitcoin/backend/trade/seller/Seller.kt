@@ -32,6 +32,9 @@ class Seller(
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Sells all coins until empty.
+     */
     @Scheduled(fixedDelay = 15000)
     fun sellCoins() {
 
@@ -48,10 +51,10 @@ class Seller(
 
             log.info("Updating SELLER to $averagePrice")
 
+            if (config.isLiveChange) deleteOrders(myOrders)
+
             val accountInfo = showAccountInfo.execute()
             val availableCoins = accountInfo.body.data.balances.btc.available_amount
-
-            if (config.isLiveChange) deleteOrders(myOrders)
 
             createOrder(availableCoins, averagePrice, sellOrderbook.body.credits)
         }
