@@ -5,14 +5,16 @@ import org.springframework.context.annotation.Configuration
 import java.math.BigDecimal
 
 @Configuration
-open class BuyerBuyerConfig {
+open class BuyerConfig {
 
     var isActive = false
-    val consideredOrderSize = 3
 
     @Value(value = "\${api.isLive}")
     var isLiveChange: Boolean = false
 
     @Value(value = "\${bitcoin.trading.buying.start}")
     var targetPrice: BigDecimal = BigDecimal.ZERO
+
+    @Value(value = "\${bitcoin.trading.buying.automatized}")
+    var isAutomatized: Boolean = false
 }

@@ -37,7 +37,7 @@ class Seller(
      */
     @Scheduled(fixedDelay = 15000)
     fun sellOnceTargetPriceIsReached() {
-        if (inactiveSeller()) {
+        if (inactiveSeller() && config.isAutomatized) {
             val currentSellOrders = compactSellOrderbookRepository.findFirstByOrderByDateTimeDesc()
 
             if (targetPriceReached(currentSellOrders)) {

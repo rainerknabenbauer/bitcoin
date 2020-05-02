@@ -1,6 +1,6 @@
 package de.nykon.bitcoin.backend.api
 
-import de.nykon.bitcoin.backend.trade.buyer.BuyerBuyerConfig
+import de.nykon.bitcoin.backend.trade.buyer.BuyerConfig
 import de.nykon.bitcoin.backend.sdk.SdkService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class BuyController(
-        private val buyerBuyerConfig: BuyerBuyerConfig,
+        private val buyerConfig: BuyerConfig,
         private val sdkService: SdkService
 ) {
 
@@ -27,8 +27,8 @@ class BuyController(
      */
     @GetMapping(path = ["/buy/activate"])
     fun activateBuyer() {
-        this.buyerBuyerConfig.isActive = true
-        log.info("Set buyer schedule to ${this.buyerBuyerConfig.isActive}")
+        this.buyerConfig.isActive = true
+        log.info("Set buyer schedule to ${this.buyerConfig.isActive}")
     }
 
     /**
@@ -36,8 +36,8 @@ class BuyController(
      */
     @GetMapping(path = ["/buy/deactivate"])
     fun deactivateBuyer() {
-        this.buyerBuyerConfig.isActive = false
-        log.info("Set buyer schedule to ${this.buyerBuyerConfig.isActive}")
+        this.buyerConfig.isActive = false
+        log.info("Set buyer schedule to ${this.buyerConfig.isActive}")
         cleanup()
     }
 

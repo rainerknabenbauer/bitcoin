@@ -102,7 +102,7 @@ TimeoutStartSec=0
 Type=simple
 KillMode=process
 WorkingDirectory=/opt/bitcoin
-ExecStart=/bin/sh -c "exec java -jar /opt/bitcoin/backend-0.0.1-SNAPSHOT.jar -Dspring.config.location=config/credentials.yml"
+ExecStart=/bin/sh -c "exec java -jar -Dspring.config.location=config/credentials.yml /opt/bitcoin/backend-0.0.1-SNAPSHOT.jar"
 LimitNOFILE=5555
  
 [Install]

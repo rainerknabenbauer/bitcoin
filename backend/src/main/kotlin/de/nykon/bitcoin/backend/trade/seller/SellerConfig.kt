@@ -7,12 +7,14 @@ import java.math.BigDecimal
 open class SellerConfig {
 
     var isActive = false
-    val consideredOrderSize = 5
 
     @Value(value = "\${api.isLive}")
     var isLiveChange: Boolean = false
 
     @Value(value = "\${bitcoin.trading.selling.start}")
     var targetPrice: BigDecimal = BigDecimal.ZERO
+
+    @Value(value = "\${bitcoin.trading.selling.automatized}")
+    var isAutomatized: Boolean = false
 
 }

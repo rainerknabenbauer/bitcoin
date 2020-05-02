@@ -23,7 +23,7 @@ import java.math.RoundingMode
  */
 @Component
 class Buyer(
-        private val configBuyer: BuyerBuyerConfig,
+        private val config: BuyerConfig,
         private val showAccountInfo: ShowAccountInfo,
         private val showMyOrders: ShowMyOrders,
         private val deleteOrder: DeleteOrder,
@@ -38,23 +38,23 @@ class Buyer(
      */
     @Scheduled(fixedDelay = 15000)
     fun buyOnceTargetPriceIsReached() {
-        if (inactiveBuyer()) {
+        if (inactiveBuyer() && config.isAutomatized) {
             val currentBuyOrders = compactBuyOrderbookRepository.findFirstByOrderByDateTimeDesc()
 
             if (targetPriceReached(currentBuyOrders)) {
                 log.info("Weighted average ${currentBuyOrders.weightedAverage} is larger " +
-                        "than target price ${configBuyer.targetPrice}")
+                        "than target price ${config.targetPrice}")
             } else {
                 log.info("Automatic activation of Buyer! Weighted average " +
-                        "${currentBuyOrders.weightedAverage} is smaller than target price ${configBuyer.targetPrice}")
-                configBuyer.isActive = true
+                        "${currentBuyOrders.weightedAverage} is smaller than target price ${config.targetPrice}")
+                config.isActive = true
             }
         }
     }
 
-    private fun inactiveBuyer() = !configBuyer.isActive
+    private fun inactiveBuyer() = !config.isActive
     private fun targetPriceReached(currentSellOrder: CompactSellOrderbook) =
-            currentSellOrder.weightedAverage.compareTo(configBuyer.targetPrice) == 1
+            currentSellOrder.weightedAverage.compareTo(config.targetPrice) == 1
 
     /**
      * Buy coins until cash reservation is exhausted.
@@ -62,9 +62,9 @@ class Buyer(
     @Scheduled(fixedDelay = 15000)
     fun buyCoins() {
 
-        if (configBuyer.isActive) {
+        if (config.isActive) {
 
-            log.info("Buyer schedule is active. Live change is ${configBuyer.isLiveChange}")
+            log.info("Buyer schedule is active. Live change is ${config.isLiveChange}")
 
             val currentBuys = compactBuyOrderbookRepository.findFirstByOrderByDateTimeDesc()
 
@@ -79,7 +79,7 @@ class Buyer(
                 val amountOfCoins = calculateAmountOfCoins(fidorReservation, currentBuys.weightedAverage)
 
                 val myOrders = showMyOrders.all()
-                if (configBuyer.isLiveChange) deleteOrders(myOrders)
+                if (config.isLiveChange) deleteOrders(myOrders)
 
                 createOrder(amountOfCoins, currentBuys.weightedAverage, myOrders.body.credits)
             }
@@ -92,9 +92,9 @@ class Buyer(
 
     private fun createOrder(availableCoins: BigDecimal, averagePrice: BigDecimal, credits: Int) {
         if (availableCoins == BigDecimal.ZERO) {
-            configBuyer.isActive = false
+            config.isActive = false
         } else {
-            if (configBuyer.isLiveChange) createOrder.buy(averagePrice, availableCoins)
+            if (config.isLiveChange) createOrder.buy(averagePrice, availableCoins)
             log.info("Average price: $averagePrice | available budget: $availableCoins | credits: $credits")
         }
     }
