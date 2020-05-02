@@ -30,7 +30,7 @@ class MyTradeInitializer(
 
             val successfulTrades = showMyTrades.execute(startDate, TradeState.SUCCESSFUL)
 
-            successfulTrades.body.trades
+            successfulTrades.body.trades!!
                     .map { trade -> CompletedTrade(
                             CryptoCurrency.BTC,
                             LocalDateTime.parse(trade.successfully_finished_at, DateTimeFormatter.ISO_DATE_TIME),
