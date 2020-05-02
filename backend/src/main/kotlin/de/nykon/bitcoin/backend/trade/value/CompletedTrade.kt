@@ -10,7 +10,7 @@ import java.time.LocalDateTime
  * Currently a workaround as there is no automatic buy history available through API
  * nor is storing a successful trade currently implemented.
  */
-@Document(collection = "myTradeHistory")
+@Document(collection = "history.mytrades")
 data class CompletedTrade(
         val cryptoCurrency: CryptoCurrency,
         val dateTime: LocalDateTime,

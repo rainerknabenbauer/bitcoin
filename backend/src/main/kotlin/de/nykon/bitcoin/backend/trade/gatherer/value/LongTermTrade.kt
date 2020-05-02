@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 /**
  * Wraps the long term history of public trades.
  */
-@Document(collection = "publicTradeHistory")
+@Document(collection = "history.publictrade")
 data class LongTermTrade(
         val dateTime: LocalDateTime,
         val trades: List<Trade>

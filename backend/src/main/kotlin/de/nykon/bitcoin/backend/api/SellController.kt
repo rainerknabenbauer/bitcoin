@@ -1,7 +1,7 @@
 package de.nykon.bitcoin.backend.api
 
 import de.nykon.bitcoin.backend.sdk.SdkService
-import de.nykon.bitcoin.backend.trade.seller.SellerSchedulConfig
+import de.nykon.bitcoin.backend.trade.seller.SellerConfig
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class SellController(
-        private val sellerSchedulConfig: SellerSchedulConfig,
+        private val sellerConfig: SellerConfig,
         private val sdkService: SdkService
 ) {
 
@@ -27,14 +27,14 @@ class SellController(
      */
     @GetMapping(path = ["/sell/activate"])
     fun activateSeller() {
-        this.sellerSchedulConfig.isActive = true
-        log.info("Set seller schedule to ${this.sellerSchedulConfig.isActive}")
+        this.sellerConfig.isActive = true
+        log.info("Set seller schedule to ${this.sellerConfig.isActive}")
     }
 
     @GetMapping(path = ["/sell/deactivate"])
     fun deactivateSeller() {
-        this.sellerSchedulConfig.isActive = false
-        log.info("Set seller schedule to ${this.sellerSchedulConfig.isActive}")
+        this.sellerConfig.isActive = false
+        log.info("Set seller schedule to ${this.sellerConfig.isActive}")
         cleanup()
     }
 

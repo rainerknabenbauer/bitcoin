@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Configuration
 import java.math.BigDecimal
 
 @Configuration
-open class SellerSchedulConfig {
+open class SellerConfig {
 
     var isActive = false
     val consideredOrderSize = 5

@@ -4,7 +4,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
-@Document(collection = "compactSellOrderbook")
+@Document(collection = "orderbook.sell.compact")
 data class CompactSellOrderbook(
         val dateTime: LocalDateTime,
         val weightedAverage: BigDecimal,

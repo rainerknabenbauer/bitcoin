@@ -7,7 +7,7 @@ import java.math.BigDecimal
 /**
  * Wraps the summary of Kraken.com.
  */
-@Document(collection = "krakenSummary")
+@Document(collection = "summary.kraken")
 data class KrakenSummary (
         val high: BigDecimal,
         val last: BigDecimal,

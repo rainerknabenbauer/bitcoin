@@ -6,12 +6,10 @@ import de.nykon.bitcoin.sdk.bitcoinDe.CreateOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
-import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.value.bitcoinde.Response
 import de.nykon.bitcoin.sdk.value.bitcoinde.deleteOrder.OrderId
 import de.nykon.bitcoin.sdk.value.bitcoinde.showAccountInfo.FidorReservation
 import de.nykon.bitcoin.sdk.value.bitcoinde.showMyOrders.ShowMyOrdersBody
-import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.ShowOrderbookBody
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -25,7 +23,7 @@ import java.math.RoundingMode
  */
 @Component
 class Buyer(
-        private val config: BuyerSchedulConfig,
+        private val configBuyer: BuyerBuyerConfig,
         private val showAccountInfo: ShowAccountInfo,
         private val showMyOrders: ShowMyOrders,
         private val deleteOrder: DeleteOrder,
@@ -45,18 +43,18 @@ class Buyer(
 
             if (targetPriceReached(currentBuyOrders)) {
                 log.info("Weighted average ${currentBuyOrders.weightedAverage} is larger " +
-                        "than target price ${config.targetPrice}")
+                        "than target price ${configBuyer.targetPrice}")
             } else {
                 log.info("Automatic activation of Buyer! Weighted average " +
-                        "${currentBuyOrders.weightedAverage} is smaller than target price ${config.targetPrice}")
-                config.isActive = true
+                        "${currentBuyOrders.weightedAverage} is smaller than target price ${configBuyer.targetPrice}")
+                configBuyer.isActive = true
             }
         }
     }
 
-    private fun inactiveBuyer() = !config.isActive
+    private fun inactiveBuyer() = !configBuyer.isActive
     private fun targetPriceReached(currentSellOrder: CompactSellOrderbook) =
-            currentSellOrder.weightedAverage.compareTo(config.targetPrice) == 1
+            currentSellOrder.weightedAverage.compareTo(configBuyer.targetPrice) == 1
 
     /**
      * Buy coins until cash reservation is exhausted.
@@ -64,9 +62,9 @@ class Buyer(
     @Scheduled(fixedDelay = 15000)
     fun buyCoins() {
 
-        if (config.isActive) {
+        if (configBuyer.isActive) {
 
-            log.info("Buyer schedule is active. Live change is ${config.isLiveChange}")
+            log.info("Buyer schedule is active. Live change is ${configBuyer.isLiveChange}")
 
             val currentBuys = compactBuyOrderbookRepository.findFirstByOrderByDateTimeDesc()
 
@@ -81,7 +79,7 @@ class Buyer(
                 val amountOfCoins = calculateAmountOfCoins(fidorReservation, currentBuys.weightedAverage)
 
                 val myOrders = showMyOrders.all()
-                if (config.isLiveChange) deleteOrders(myOrders)
+                if (configBuyer.isLiveChange) deleteOrders(myOrders)
 
                 createOrder(amountOfCoins, currentBuys.weightedAverage, myOrders.body.credits)
             }
@@ -94,9 +92,9 @@ class Buyer(
 
     private fun createOrder(availableCoins: BigDecimal, averagePrice: BigDecimal, credits: Int) {
         if (availableCoins == BigDecimal.ZERO) {
-            config.isActive = false
+            configBuyer.isActive = false
         } else {
-            if (config.isLiveChange) createOrder.buy(averagePrice, availableCoins)
+            if (configBuyer.isLiveChange) createOrder.buy(averagePrice, availableCoins)
             log.info("Average price: $averagePrice | available budget: $availableCoins | credits: $credits")
         }
     }

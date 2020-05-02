@@ -11,7 +11,7 @@ import java.math.BigDecimal
 internal class SellerTest {
 
     @Autowired
-    private lateinit var config: SellerSchedulConfig
+    private lateinit var config: SellerConfig
 
     @Autowired
     private lateinit var testee: Seller

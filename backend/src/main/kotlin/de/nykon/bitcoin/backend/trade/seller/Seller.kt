@@ -21,7 +21,7 @@ import java.math.BigDecimal
  */
 @Component
 class Seller(
-        private val config: SellerSchedulConfig,
+        private val config: SellerConfig,
         private val showAccountInfo: ShowAccountInfo,
         private val showMyOrders: ShowMyOrders,
         private val deleteOrder: DeleteOrder,

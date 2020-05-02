@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 /**
  * Wraps the public trades within the last 24 hours.
  */
-@Document(collection = "rotatingPublicTradeHistory")
+@Document(collection = "history.publictrade.rotating")
 data class ShortTermTrade(
         val dateTime: LocalDateTime,
         val trades: List<Trade>
