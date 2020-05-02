@@ -1,23 +1,26 @@
 package de.nykon.bitcoin.backend.trade.gatherer
 
 import de.nykon.bitcoin.backend.trade.gatherer.repository.BuyOrderbookRepository
-import de.nykon.bitcoin.backend.trade.gatherer.repository.FlattenBuyOrderbookRepository
-import de.nykon.bitcoin.backend.trade.gatherer.repository.FlattenedSellOrderbookRepository
+import de.nykon.bitcoin.backend.trade.gatherer.repository.CompactBuyOrderbookRepository
+import de.nykon.bitcoin.backend.trade.gatherer.repository.CompactSellOrderbookRepository
 import de.nykon.bitcoin.backend.trade.gatherer.repository.KrakenSummaryRepository
 import de.nykon.bitcoin.backend.trade.gatherer.repository.LongTradeHistoryRepository
 import de.nykon.bitcoin.backend.trade.gatherer.repository.SellOrderbookRepository
 import de.nykon.bitcoin.backend.trade.gatherer.repository.ShortTradeHistoryRepository
 import de.nykon.bitcoin.backend.trade.gatherer.value.BuyOrderbook
-import de.nykon.bitcoin.backend.trade.gatherer.value.FlattenedBuyOrderbook
-import de.nykon.bitcoin.backend.trade.gatherer.value.FlattenedSellOrderbook
+import de.nykon.bitcoin.backend.trade.gatherer.value.CompactBuyOrderbook
+import de.nykon.bitcoin.backend.trade.gatherer.value.CompactSellOrderbook
 import de.nykon.bitcoin.backend.trade.gatherer.value.LongTermTrade
 import de.nykon.bitcoin.backend.trade.gatherer.value.SellOrderbook
 import de.nykon.bitcoin.backend.trade.gatherer.value.ShortTermTrade
 import de.nykon.bitcoin.backend.trade.MyTradeRepository
+import de.nykon.bitcoin.backend.trade.gatherer.value.KrakenSummary
+import de.nykon.bitcoin.backend.trade.gatherer.value.Offer
+import de.nykon.bitcoin.backend.trade.gatherer.value.Trade
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyTrades
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowPublicTradeHistory
-import de.nykon.bitcoin.sdk.cryptowatch.KrakenSummary
+import de.nykon.bitcoin.sdk.cryptowatch.ShowKrakenSummary
 import de.nykon.bitcoin.sdk.value.bitcoinde.Response
 import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.Order
 import de.nykon.bitcoin.sdk.value.bitcoinde.showOrderbook.ShowOrderbookBody
@@ -26,6 +29,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDateTime
 
@@ -41,10 +45,10 @@ open class Gatherer(
         private val longTradeHistoryRepository: LongTradeHistoryRepository,
         private val buyOrderbookRepository: BuyOrderbookRepository,
         private val sellOrderbookRepository: SellOrderbookRepository,
-        private val flattenBuyOrderbookRepository: FlattenBuyOrderbookRepository,
-        private val flattenedSellOrderbookRepository: FlattenedSellOrderbookRepository,
+        private val compactBuyOrderbookRepository: CompactBuyOrderbookRepository,
+        private val compactSellOrderbookRepository: CompactSellOrderbookRepository,
         private val myTradeRepository: MyTradeRepository,
-        private val krakenSummary: KrakenSummary,
+        private val showKrakenSummary: ShowKrakenSummary,
         private val krakenSummaryRepository: KrakenSummaryRepository
 ) {
 
@@ -82,12 +86,14 @@ open class Gatherer(
 
         val publicTradeHistory = showPublicTradeHistory.all()
 
-        publicTradeHistory.body.trades
+        val tradeHistory = publicTradeHistory.body.trades
                 .map { trade ->
-                    LongTermTrade(trade.amount_currency_to_trade, trade.date,
+                    Trade(trade.date, trade.amount_currency_to_trade,
                             trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)
-                }
-                .forEach { trade -> longTradeHistoryRepository.save(trade) }
+                }.toList()
+
+        val longTermTrade = LongTermTrade(LocalDateTime.now(), tradeHistory)
+        longTradeHistoryRepository.save(longTermTrade)
 
         log.info("Saved ${publicTradeHistory.body.trades.size} in Public Trade History " +
                 "| credits: ${publicTradeHistory.body.credits}")
@@ -102,12 +108,15 @@ open class Gatherer(
         shortTradeHistoryRepository.deleteAll()
         val publicTradeHistory = showPublicTradeHistory.all()
 
-        publicTradeHistory.body.trades
+        val tradeHistory = publicTradeHistory.body.trades
                 .map { trade ->
-                    ShortTermTrade(trade.amount_currency_to_trade, trade.date,
+                    Trade(trade.date, trade.amount_currency_to_trade,
                             trade.price.setScale(2, RoundingMode.HALF_UP), trade.tid)
                 }
-                .forEach { trade -> shortTradeHistoryRepository.save(trade) }
+                .toList()
+
+        val shortTermTrade = ShortTermTrade(LocalDateTime.now(), tradeHistory)
+        shortTradeHistoryRepository.save(shortTermTrade)
 
         log.info("Saved ${publicTradeHistory.body.trades.size} in Public Trade History " +
                 "| credits: ${publicTradeHistory.body.credits}")
@@ -127,7 +136,7 @@ open class Gatherer(
 
         log.info("Saved Raw Buy Orderbook | credits: ${showOrderbook.body.credits}")
 
-        flattenBuy(buyOrderbook)
+        compactBuy(buyOrderbook)
     }
 
     /**
@@ -144,7 +153,7 @@ open class Gatherer(
 
         log.info("Saved Raw Sell Orderbook | credits: ${showOrderbook.body.credits}")
 
-        flattenSell(sellOrderbook)
+        compactSell(sellOrderbook)
     }
 
     private fun fixNumberFormatting(showOrderbook: Response<ShowOrderbookBody>): List<Order> {
@@ -171,15 +180,18 @@ open class Gatherer(
      * Extracts the most relevant fields and stores them separately.
      */
     @Async
-    open fun flattenBuy(buyOrderbook: BuyOrderbook) {
+    open fun compactBuy(buyOrderbook: BuyOrderbook) {
 
-        buyOrderbook.orders
+        val compactList = buyOrderbook.orders
                 .map { order ->
-                    FlattenedBuyOrderbook(buyOrderbook.dateTime,
-                            order.trading_partner_information.username,
+                    Offer(order.trading_partner_information.username,
                             order.price,
                             order.max_amount_currency_to_trade)
-                }.forEach { order -> flattenBuyOrderbookRepository.save(order) }
+                }.toList()
+
+        val calculateWeightedAverage = calculateWeightedAverage(compactList)
+        val compactTradeHistory = CompactBuyOrderbook(buyOrderbook.dateTime, calculateWeightedAverage, compactList)
+        compactBuyOrderbookRepository.save(compactTradeHistory)
 
         log.info("Saved Compact Buy Orderbook")
     }
@@ -188,17 +200,39 @@ open class Gatherer(
      * Extracts the most relevant fields and stores them separately.
      */
     @Async
-    open fun flattenSell(sellOrderbook: SellOrderbook) {
+    open fun compactSell(sellOrderbook: SellOrderbook) {
 
-        sellOrderbook.orders
+        val compactList = sellOrderbook.orders
                 .map { order ->
-                    FlattenedSellOrderbook(sellOrderbook.dateTime,
-                            order.trading_partner_information.username,
+                    Offer(order.trading_partner_information.username,
                             order.price,
                             order.max_amount_currency_to_trade)
-                }.forEach { order -> flattenedSellOrderbookRepository.save(order) }
+                }.toList()
+
+        val calculateWeightedAverage = calculateWeightedAverage(compactList)
+        val compactTradeHistory = CompactSellOrderbook(sellOrderbook.dateTime, calculateWeightedAverage, compactList)
+        compactSellOrderbookRepository.save(compactTradeHistory)
 
         log.info("Saved Compact Sell Orderbook")
+    }
+
+    /**
+     * Calculate weighted average price.
+     */
+    fun calculateWeightedAverage(offers: List<Offer>): BigDecimal {
+        val minimumSizeOffers = offers
+                .filter { offer -> offer.amount.multiply(offer.price) > BigDecimal.valueOf(1000) }
+                .subList(0, 3)
+
+        val dividend = minimumSizeOffers.stream()
+                .map { offer -> offer.price.multiply(offer.amount) }
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+
+        val divisor = minimumSizeOffers.stream()
+                .map { offer -> offer.amount }
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+
+        return dividend.divide(divisor, 2, RoundingMode.HALF_UP)
     }
 
     /**
@@ -207,8 +241,12 @@ open class Gatherer(
     @Scheduled(fixedDelay = 60000)
     fun kraken() {
 
-        val summary = krakenSummary.execute()
-        krakenSummaryRepository.save(summary.body)
+        val summary = showKrakenSummary.execute().body.result
+
+        val krakenSummary = KrakenSummary(summary.price.high, summary.price.last,
+                summary.price.low, summary.price.change, summary.volume)
+
+        krakenSummaryRepository.save(krakenSummary)
     }
 
 }

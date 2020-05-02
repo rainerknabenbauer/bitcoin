@@ -32,6 +32,17 @@ class Seller(
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
+
+    /**
+     *
+     */
+    @Scheduled(fixedDelay = 30000)
+    fun sellOnceTargetPriceIsReached() {
+
+
+
+    }
+
     /**
      * Sells all coins until empty.
      */

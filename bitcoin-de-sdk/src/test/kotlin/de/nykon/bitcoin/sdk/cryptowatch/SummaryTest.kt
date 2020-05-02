@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 internal class SummaryTest {
 
-    private var testee: KrakenSummary = KrakenSummary()
+    private var testee: ShowKrakenSummary = ShowKrakenSummary()
 
     @Test
     fun `receive summary`() {

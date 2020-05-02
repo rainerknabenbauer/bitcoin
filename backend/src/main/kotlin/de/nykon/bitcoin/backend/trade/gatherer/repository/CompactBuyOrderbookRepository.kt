@@ -1,6 +1,6 @@
 package de.nykon.bitcoin.backend.trade.gatherer.repository
 
-import de.nykon.bitcoin.backend.trade.gatherer.value.FlattenedBuyOrderbook
+import de.nykon.bitcoin.backend.trade.gatherer.value.CompactBuyOrderbook
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
 
@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository
  * Records current BUY offers.
  */
 @Repository
-interface FlattenBuyOrderbookRepository : MongoRepository<FlattenedBuyOrderbook, String> {
+interface CompactBuyOrderbookRepository : MongoRepository<CompactBuyOrderbook, String> {
 
 }

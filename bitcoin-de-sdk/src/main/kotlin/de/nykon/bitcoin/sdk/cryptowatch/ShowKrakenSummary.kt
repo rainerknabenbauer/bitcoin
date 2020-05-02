@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder
 import de.nykon.bitcoin.sdk.value.bitcoinde.Response
 import de.nykon.bitcoin.sdk.value.cryptowatch.summary.KrakenSummaryBody
 
-class KrakenSummary : Transaction<KrakenSummaryBody>() {
+class ShowKrakenSummary : Transaction<KrakenSummaryBody>() {
 
     val uri = "https://api.cryptowat.ch/markets/kraken/btceur/summary"
 

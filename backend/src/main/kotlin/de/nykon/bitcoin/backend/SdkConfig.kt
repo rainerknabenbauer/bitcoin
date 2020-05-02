@@ -7,7 +7,7 @@ import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyTrades
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowPublicTradeHistory
-import de.nykon.bitcoin.sdk.cryptowatch.KrakenSummary
+import de.nykon.bitcoin.sdk.cryptowatch.ShowKrakenSummary
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -60,7 +60,7 @@ open class SdkConfig {
     }
 
     @Bean
-    open fun krakenSummary(): KrakenSummary {
-        return KrakenSummary()
+    open fun krakenSummary(): ShowKrakenSummary {
+        return ShowKrakenSummary()
     }
 }

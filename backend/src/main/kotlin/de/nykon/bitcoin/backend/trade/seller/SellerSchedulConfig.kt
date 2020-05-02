@@ -13,6 +13,6 @@ open class SellerSchedulConfig {
     var isLiveChange: Boolean = false
 
     @Value(value = "\${bitcoin.trading.selling.start}")
-    var threshold: BigDecimal = BigDecimal.ZERO
+    var targetPrice: BigDecimal = BigDecimal.ZERO
 
 }

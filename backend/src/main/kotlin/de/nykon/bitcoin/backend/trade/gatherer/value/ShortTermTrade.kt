@@ -2,15 +2,14 @@ package de.nykon.bitcoin.backend.trade.gatherer.value
 
 import org.springframework.data.mongodb.core.mapping.Document
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
 /**
- * Wraps the public trades within the last 24 hourss.
+ * Wraps the public trades within the last 24 hours.
  */
 @Document(collection = "rotatingPublicTradeHistory")
 data class ShortTermTrade(
-        val amount_currency_to_trade: BigDecimal,
-        val date: String,
-        val price: BigDecimal,
-        val tid: Int
+        val dateTime: LocalDateTime,
+        val trades: List<Trade>
 ) {
 }
