@@ -2,29 +2,52 @@ server:
   port: 8888
 
 bitcoin:
-  apiKey:
-  apiSecret:
-
+  apiKey: API_KEY
+  apiSecret: API_SECRET
+  trading:
+    selling:
+      start: AUTOMATIC_SELLING_PRICE
 default:
-  user:
-  password:
+  user: USER
+  password: PASSWORD
+
 
 spring:
   profiles:
-    active: dev
+    active: prod
   data:
     mongodb:
       uri: mongodb://127.0.0.1:27017
       database: bitcoin
+  mail:
+    host: SMTP-HOST
+    port: PORT
+    username: EMAIL
+    password: PASSWORD
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls: true
 
 ---
 spring:
   profiles: dev
 api:
-  active: false
+  isLive: false
+mail:
+  recipients: EMAIL,EMAIL
+bitcoin:
+  account:
+    created: 2020-04-01T00:00:00
 
 ---
 spring:
   profiles: prod
 api:
-  active: true
+  isLive: true
+mail:
+  recipients: EMAIL,EMAIL
+bitcoin:
+  account:
+    created: 2012-01-01T00:00:00
