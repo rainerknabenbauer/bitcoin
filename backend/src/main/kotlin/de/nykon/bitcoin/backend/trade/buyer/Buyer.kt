@@ -28,7 +28,6 @@ class Buyer(
         private val config: BuyerSchedulConfig,
         private val showAccountInfo: ShowAccountInfo,
         private val showMyOrders: ShowMyOrders,
-        private val showOrderbook: ShowOrderbook,
         private val deleteOrder: DeleteOrder,
         private val createOrder: CreateOrder,
         private val compactBuyOrderbookRepository: CompactBuyOrderbookRepository
@@ -39,7 +38,7 @@ class Buyer(
     /**
      * Triggers sale once target price is reached.
      */
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 15000)
     fun buyOnceTargetPriceIsReached() {
         if (inactiveBuyer()) {
             val currentBuyOrders = compactBuyOrderbookRepository.findFirstByOrderByDateTimeDesc()
@@ -69,24 +68,22 @@ class Buyer(
 
             log.info("Buyer schedule is active. Live change is ${config.isLiveChange}")
 
-            val myOrders = showMyOrders.all()
-            val buyOrderbook = showOrderbook.buy()
-
-            val averagePrice = findAveragePrice(buyOrderbook)
+            val currentBuys = compactBuyOrderbookRepository.findFirstByOrderByDateTimeDesc()
 
             /* Delete outdated bids and re-submit with new average price */
 
-            log.info("Updating BUYER to $averagePrice")
+            log.info("Updating BUYER to ${currentBuys.weightedAverage}")
 
             val accountInfo = showAccountInfo.execute()
             val fidorReservation = accountInfo.body.data.fidor_reservation
 
             if (fidorReservation != null) {
-                val amountOfCoins = calculateAmountOfCoins(fidorReservation, averagePrice)
+                val amountOfCoins = calculateAmountOfCoins(fidorReservation, currentBuys.weightedAverage)
 
+                val myOrders = showMyOrders.all()
                 if (config.isLiveChange) deleteOrders(myOrders)
 
-                createOrder(amountOfCoins, averagePrice, buyOrderbook.body.credits)
+                createOrder(amountOfCoins, currentBuys.weightedAverage, myOrders.body.credits)
             }
         }
     }
@@ -97,7 +94,7 @@ class Buyer(
 
     private fun createOrder(availableCoins: BigDecimal, averagePrice: BigDecimal, credits: Int) {
         if (availableCoins == BigDecimal.ZERO) {
-            deactivateSchedule()
+            config.isActive = false
         } else {
             if (config.isLiveChange) createOrder.buy(averagePrice, availableCoins)
             log.info("Average price: $averagePrice | available budget: $availableCoins | credits: $credits")
@@ -111,19 +108,4 @@ class Buyer(
                     .forEach { order -> deleteOrder.execute(OrderId(order.order_id)) }
         }
     }
-
-    /* Get the cheapest offers and calculate an average price */
-    private fun findAveragePrice(buyOrderbook: Response<ShowOrderbookBody>): BigDecimal {
-        return buyOrderbook.body.orders
-                .subList(0, config.consideredOrderSize)
-                .map { order -> order.price }
-                .reduce(BigDecimal::add)
-                .divide(config.consideredOrderSize.toBigDecimal(), 2, RoundingMode.HALF_DOWN)
-    }
-
-    private fun deactivateSchedule() {
-        config.isActive = false
-    }
-
-
 }

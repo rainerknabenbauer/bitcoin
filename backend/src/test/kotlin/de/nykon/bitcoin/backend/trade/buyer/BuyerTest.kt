@@ -13,9 +13,6 @@ import java.math.BigDecimal
 internal class BuyerTest {
 
     @Autowired
-    private lateinit var config: BuyerSchedulConfig
-
-    @Autowired
     private lateinit var testee: Buyer
 
     @Autowired

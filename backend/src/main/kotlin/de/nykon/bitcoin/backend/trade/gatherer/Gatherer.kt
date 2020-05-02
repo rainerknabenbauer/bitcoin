@@ -132,7 +132,7 @@ open class Gatherer(
     /**
      * Collects the current BUY offers and stores the raw data.
      */
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedDelay = 10000)
     fun buy() {
         val showOrderbook = showOrderbook.buy()
 
@@ -149,7 +149,7 @@ open class Gatherer(
     /**
      * Collects the current SELL offers and stores the raw data.
      */
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedDelay = 10000)
     fun sell() {
         val showOrderbook = showOrderbook.sell()
 
