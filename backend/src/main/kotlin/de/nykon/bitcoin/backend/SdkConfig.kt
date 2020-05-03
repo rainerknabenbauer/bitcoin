@@ -60,7 +60,7 @@ open class SdkConfig {
     }
 
     @Bean
-    open fun krakenSummary(): ShowKrakenSummary {
+    open fun showKrakenSummary(): ShowKrakenSummary {
         return ShowKrakenSummary()
     }
 }

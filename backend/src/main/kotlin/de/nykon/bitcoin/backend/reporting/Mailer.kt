@@ -1,12 +1,18 @@
 package de.nykon.bitcoin.backend.reporting
 
+import de.nykon.bitcoin.backend.trade.buyer.BuyerConfig
+import de.nykon.bitcoin.backend.trade.gatherer.repository.KrakenSummaryRepository
+import de.nykon.bitcoin.backend.trade.gatherer.value.KrakenSummary
+import de.nykon.bitcoin.backend.trade.seller.SellerConfig
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
+import de.nykon.bitcoin.sdk.cryptowatch.ShowKrakenSummary
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Properties
@@ -25,7 +31,10 @@ import javax.mail.internet.MimeMessage
 open class Mailer(
         private val config: MailerConfig,
         private val showAccountInfo: ShowAccountInfo,
-        private val myTradeHistoryService: MyTradeHistoryService
+        private val myTradeHistoryService: MyTradeHistoryService,
+        private val sellerConfig: SellerConfig,
+        private val buyerConfig: BuyerConfig,
+        private val krakenSummaryRepository: KrakenSummaryRepository
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -38,9 +47,25 @@ open class Mailer(
     open fun sendDailyNewsletter() {
 
         val accountInfo = showAccountInfo.execute()
+        val krakenSummary = krakenSummaryRepository.findFirstByOrderByDateTimeDesc()
 
         var message = this::class.java.getResource("/mail.html").readText(Charsets.UTF_8)
                 .replace("{{BITCOINS}}", accountInfo.body.data.balances.btc.total_amount.toString())
+                .replace("{{PRICE}}", krakenSummary.last.toPlainString())
+
+        message = if (krakenSummary.change.absolute.compareTo(BigDecimal.ZERO) == 1) {
+            message.replace("{{TREND}}", "oben")
+        } else {
+            message.replace("{{TREND}}", "unten")
+        }
+
+        message = message.replace("{{TREND_VALUE}}", krakenSummary.change.absolute.toPlainString())
+
+        message = if (sellerConfig.isAutomatized) {
+            message.replace("{{AUTOMATIC_SALE}}","<br>Verkauf startet automatisch bei einem Kurs von ${sellerConfig.targetPrice}.")
+        } else {
+            message.replace("{{AUTOMATIC_SALE}}","")
+        }
 
         val newestTrades = myTradeHistoryService.getNewestTrades()
 

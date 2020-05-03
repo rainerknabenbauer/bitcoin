@@ -36,6 +36,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -250,7 +251,7 @@ open class Gatherer(
 
         val summary = showKrakenSummary.execute().body.result
 
-        val krakenSummary = KrakenSummary(summary.price.high, summary.price.last,
+        val krakenSummary = KrakenSummary(LocalDateTime.now(), summary.price.high, summary.price.last,
                 summary.price.low, summary.price.change, summary.volume)
 
         krakenSummaryRepository.save(krakenSummary)
