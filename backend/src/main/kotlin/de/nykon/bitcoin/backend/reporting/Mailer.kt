@@ -23,26 +23,12 @@ import javax.mail.internet.MimeMessage
  */
 @Component
 open class Mailer(
+        private val config: MailerConfig,
         private val showAccountInfo: ShowAccountInfo,
         private val myTradeHistoryService: MyTradeHistoryService
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
-
-    @Value("\${mail.recipients}")
-    private lateinit var recipients: String
-
-    @Value("\${spring.mail.host}")
-    private lateinit var host: String
-
-    @Value("\${spring.mail.username}")
-    private lateinit var email: String
-
-    @Value("\${spring.mail.password}")
-    private lateinit var password: String
-
-    @Value("\${spring.mail.properties.mail.smtp.starttls}")
-    private var starttls: Boolean = false
 
     /**
      * Sends the current state of affairs once a day.
@@ -77,23 +63,23 @@ open class Mailer(
         }
         message = message.replace("{{TRANSACTION_ROW}}", "")
 
-        send(recipients.split(",").toList(), message)
+        send(config.recipients.split(",").toList(), message)
     }
 
     private fun send(recipients: List<String>, message: String) {
         val props = Properties()
         props["mail.smtp.auth"] = "true"
-        props["mail.smtp.starttls.enable"] = starttls
-        props["mail.smtp.host"] = host
+        props["mail.smtp.starttls.enable"] = config.starttls
+        props["mail.smtp.host"] = config.host
         props["mail.smtp.port"] = "587"
 
         val session: Session = Session.getInstance(props, object : Authenticator() {
             override fun getPasswordAuthentication(): PasswordAuthentication {
-                return PasswordAuthentication(email, password)
+                return PasswordAuthentication(config.email, config.password)
             }
         })
         val msg: Message = MimeMessage(session)
-        msg.setFrom(InternetAddress(email, false))
+        msg.setFrom(InternetAddress(config.email, false))
 
         log.info("Sending mail with message: $message")
 
