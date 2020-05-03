@@ -68,7 +68,7 @@ open class Gatherer(
         val myTrades = showMyTrades.execute(lastTrade.dateTime.plusSeconds(1), TradeState.SUCCESSFUL)
 
         if (myTrades.body.trades.isNullOrEmpty()) {
-            log.info("Stored 0 new trades of myself.")
+            log.info("Stored 0 new trades executed by this account.")
         } else {
             myTrades.body.trades!!
                     .map { trade -> CompletedTrade(
@@ -82,7 +82,7 @@ open class Gatherer(
                         myTradeRepository.save(it)
                     }
 
-            log.info("Collected ${myTrades.body.trades!!.size} new trades of myself.")
+            log.info("Collected ${myTrades.body.trades!!.size} new trades executed by this account.")
         }
     }
 
