@@ -18,8 +18,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
- * Once activated, it creates a BUY offer for all available bitcoins.
- * It periodically fetches the current price and updates the offer.
+ * Maintains all buy related trade activities.
  */
 @Component
 class Buyer(

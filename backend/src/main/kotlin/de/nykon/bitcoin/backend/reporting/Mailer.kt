@@ -41,6 +41,9 @@ open class Mailer(
     @Value("\${spring.mail.password}")
     private lateinit var password: String
 
+    @Value("\${spring.mail.properties.mail.smtp.starttls}")
+    private var starttls: Boolean = false
+
     /**
      * Sends the current state of affairs once a day.
      */
@@ -80,7 +83,7 @@ open class Mailer(
     private fun send(recipients: List<String>, message: String) {
         val props = Properties()
         props["mail.smtp.auth"] = "true"
-        props["mail.smtp.starttls.enable"] = "false"
+        props["mail.smtp.starttls.enable"] = starttls
         props["mail.smtp.host"] = host
         props["mail.smtp.port"] = "587"
 

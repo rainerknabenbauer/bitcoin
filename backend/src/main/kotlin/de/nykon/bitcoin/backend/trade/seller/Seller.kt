@@ -16,8 +16,7 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 /**
- * Once activated, it creates a SELL offer for all available bitcoins.
- * It periodically fetches the current price and updates the offer.
+ * Maintains all sell related trade activities.
  */
 @Component
 class Seller(

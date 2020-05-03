@@ -29,8 +29,6 @@ open class ShowMyTrades(
                 .replace("{{start}}", "$startDate+02:00")
                 .replace("{{state}}", state.value)
 
-        println(json)
-
         return super.execute(json)
     }
 
