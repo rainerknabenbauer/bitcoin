@@ -6,7 +6,8 @@ import java.math.BigDecimal
 @Configuration
 open class SellerConfig {
 
-    var isActive = false
+    @Value(value = "\${bitcoin.trading.selling.active}")
+    var isActive: Boolean = false
 
     @Value(value = "\${api.isLive}")
     var isLiveChange: Boolean = false

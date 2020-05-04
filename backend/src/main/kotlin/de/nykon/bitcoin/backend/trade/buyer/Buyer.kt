@@ -6,6 +6,7 @@ import de.nykon.bitcoin.sdk.bitcoinDe.CreateOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.value.bitcoinde.Response
 import de.nykon.bitcoin.sdk.value.bitcoinde.deleteOrder.OrderId
 import de.nykon.bitcoin.sdk.value.bitcoinde.showAccountInfo.FidorReservation
@@ -27,6 +28,7 @@ class Buyer(
         private val showMyOrders: ShowMyOrders,
         private val deleteOrder: DeleteOrder,
         private val createOrder: CreateOrder,
+        private val showOrderbook: ShowOrderbook,
         private val compactBuyOrderbookRepository: CompactBuyOrderbookRepository
 ) {
 
@@ -69,7 +71,7 @@ class Buyer(
 
             /* Delete outdated bids and re-submit with new average price */
 
-            log.info("Updating BUYER to ${currentBuys.weightedAverage}")
+            log.info("Average weighted buying price is at ${currentBuys.weightedAverage}")
 
             val accountInfo = showAccountInfo.execute()
             val fidorReservation = accountInfo.body.data.fidor_reservation
@@ -80,7 +82,18 @@ class Buyer(
                 val myOrders = showMyOrders.all()
                 if (config.isLiveChange) deleteOrders(myOrders)
 
-                createOrder(amountOfCoins, currentBuys.weightedAverage, myOrders.body.credits)
+                /* Set buying price */
+
+                val showOrderbook = showOrderbook.buy()
+                val rival = showOrderbook.body.orders
+                        .first { order ->
+                            order.max_amount_currency_to_trade > amountOfCoins
+                                    || order.max_volume_currency_to_pay > config.minVolume }
+
+                val adjustedPrice = rival.price.add(BigDecimal.ONE)
+                        .setScale(2, RoundingMode.HALF_DOWN)
+
+                createOrder(amountOfCoins, adjustedPrice, myOrders.body.credits)
             }
         }
     }
@@ -94,7 +107,7 @@ class Buyer(
             config.isActive = false
         } else {
             if (config.isLiveChange) createOrder.buy(averagePrice, availableCoins)
-            log.info("Average price: $averagePrice | available budget: $availableCoins | credits: $credits")
+            log.info("Adjusted price: $averagePrice | available budget: $availableCoins | credits: $credits")
         }
     }
 

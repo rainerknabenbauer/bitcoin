@@ -72,7 +72,7 @@ class Seller(
 
             /* Delete outdated bids and re-submit with new average price */
 
-            log.info("Average weighted price is at ${currentSells.weightedAverage}")
+            log.info("Average weighted selling price is at ${currentSells.weightedAverage}")
 
             val myOrders = showMyOrders.all()
             if (config.isLiveChange) deleteOrders(myOrders)
@@ -88,7 +88,8 @@ class Seller(
                         order.max_amount_currency_to_trade > availableCoins
                                 || order.max_volume_currency_to_pay > config.minVolume }
 
-            val adjustedPrice = rival.price.subtract(BigDecimal.ONE).setScale(2, RoundingMode.HALF_DOWN)
+            val adjustedPrice = rival.price.subtract(BigDecimal.ONE)
+                    .setScale(2, RoundingMode.HALF_DOWN)
 
             createOrder(availableCoins, adjustedPrice, myOrders.body.credits)
         }
