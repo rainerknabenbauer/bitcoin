@@ -69,7 +69,7 @@ class Buyer(
 
             val currentBuys = compactBuyOrderbookRepository.findFirstByOrderByDateTimeDesc()
 
-            /* Delete outdated bids and re-submit with new average price */
+            /* Delete outdated bids and re-submit with new price */
 
             log.info("Average weighted buying price is at ${currentBuys.weightedAverage}")
 
