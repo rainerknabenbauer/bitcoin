@@ -6,6 +6,7 @@ import de.nykon.bitcoin.sdk.bitcoinDe.CreateOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.DeleteOrder
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
+import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.value.bitcoinde.Response
 import de.nykon.bitcoin.sdk.value.bitcoinde.deleteOrder.OrderId
 import de.nykon.bitcoin.sdk.value.bitcoinde.showMyOrders.ShowMyOrdersBody
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * Maintains all sell related trade activities.
@@ -25,6 +27,7 @@ class Seller(
         private val showMyOrders: ShowMyOrders,
         private val deleteOrder: DeleteOrder,
         private val createOrder: CreateOrder,
+        private val showOrderbook: ShowOrderbook,
         private val compactSellOrderbookRepository: CompactSellOrderbookRepository
 ) {
 
@@ -69,7 +72,7 @@ class Seller(
 
             /* Delete outdated bids and re-submit with new average price */
 
-            log.info("Updating SELLER to ${currentSells.weightedAverage}")
+            log.info("Average weighted price is at ${currentSells.weightedAverage}")
 
             val myOrders = showMyOrders.all()
             if (config.isLiveChange) deleteOrders(myOrders)
@@ -77,16 +80,26 @@ class Seller(
             val accountInfo = showAccountInfo.execute()
             val availableCoins = accountInfo.body.data.balances.btc.available_amount
 
-            createOrder(availableCoins, currentSells.weightedAverage, myOrders.body.credits)
+            /* Set selling price */
+
+            val showOrderbook = showOrderbook.sell()
+            val rival = showOrderbook.body.orders
+                    .first { order ->
+                        order.max_amount_currency_to_trade > availableCoins
+                                || order.max_volume_currency_to_pay > config.minVolume }
+
+            val adjustedPrice = rival.price.subtract(BigDecimal.ONE).setScale(2, RoundingMode.HALF_DOWN)
+
+            createOrder(availableCoins, adjustedPrice, myOrders.body.credits)
         }
     }
 
-    fun createOrder(availableCoins: BigDecimal, averagePrice: BigDecimal, credits: Int) {
+    fun createOrder(availableCoins: BigDecimal, price: BigDecimal, credits: Int) {
         if (availableCoins == BigDecimal.ZERO) {
             config.isActive = false
         } else {
-            if (config.isLiveChange) createOrder.sell(averagePrice, availableCoins)
-            else log.info("Average price: $averagePrice | available coins: $availableCoins | credits: $credits")
+            if (config.isLiveChange) createOrder.sell(price, availableCoins)
+            else log.info("Adjusted price: $price | available coins: $availableCoins | credits: $credits")
         }
     }
 
