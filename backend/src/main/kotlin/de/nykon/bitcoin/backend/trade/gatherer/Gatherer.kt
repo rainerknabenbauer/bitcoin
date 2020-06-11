@@ -14,6 +14,7 @@ import de.nykon.bitcoin.backend.trade.gatherer.value.LongTermTrade
 import de.nykon.bitcoin.backend.trade.gatherer.value.SellOrderbook
 import de.nykon.bitcoin.backend.trade.gatherer.value.ShortTermTrade
 import de.nykon.bitcoin.backend.trade.MyTradeRepository
+import de.nykon.bitcoin.backend.trade.buyer.BuyerConfig
 import de.nykon.bitcoin.backend.trade.gatherer.value.KrakenSummary
 import de.nykon.bitcoin.backend.trade.gatherer.value.Offer
 import de.nykon.bitcoin.backend.trade.gatherer.value.Trade
@@ -56,7 +57,8 @@ open class Gatherer(
         private val compactSellOrderbookRepository: CompactSellOrderbookRepository,
         private val myTradeRepository: MyTradeRepository,
         private val showKrakenSummary: ShowKrakenSummary,
-        private val krakenSummaryRepository: KrakenSummaryRepository
+        private val krakenSummaryRepository: KrakenSummaryRepository,
+        private val buyerConfig: BuyerConfig
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -133,7 +135,7 @@ open class Gatherer(
     /**
      * Collects the current BUY offers and stores the raw data.
      */
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 15000)
     fun buy() {
         val showOrderbook = showOrderbook.buy()
 
@@ -150,7 +152,7 @@ open class Gatherer(
     /**
      * Collects the current SELL offers and stores the raw data.
      */
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 15000)
     fun sell() {
         val showOrderbook = showOrderbook.sell()
 
@@ -228,9 +230,13 @@ open class Gatherer(
      * Calculate weighted average price.
      */
     fun calculateWeightedAverage(offers: List<Offer>): BigDecimal {
-        val minimumSizeOffers = offers
-                .filter { offer -> offer.amount.multiply(offer.price) > BigDecimal.valueOf(1000) }
-                .subList(0, 3)
+
+        val offers = offers
+                .filter { offer -> offer.amount.multiply(offer.price) > buyerConfig.minVolume }
+
+        val length = if (offers.size <= 3) offers.size-1 else 3
+
+        val minimumSizeOffers = offers.subList(0, length)
 
         val dividend = minimumSizeOffers.stream()
                 .map { offer -> offer.price.multiply(offer.amount) }

@@ -8,6 +8,7 @@ import de.nykon.bitcoin.sdk.bitcoinDe.ShowAccountInfo
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowMyOrders
 import de.nykon.bitcoin.sdk.bitcoinDe.ShowOrderbook
 import de.nykon.bitcoin.sdk.value.bitcoinde.Response
+import de.nykon.bitcoin.sdk.value.bitcoinde.TransactionType
 import de.nykon.bitcoin.sdk.value.bitcoinde.deleteOrder.OrderId
 import de.nykon.bitcoin.sdk.value.bitcoinde.showAccountInfo.FidorReservation
 import de.nykon.bitcoin.sdk.value.bitcoinde.showMyOrders.ShowMyOrdersBody
@@ -80,12 +81,13 @@ class Buyer(
                 val amountOfCoins = calculateAmountOfCoins(fidorReservation, currentBuys.weightedAverage)
 
                 val myOrders = showMyOrders.all()
-                if (config.isLiveChange) deleteOrders(myOrders)
 
                 /* Set buying price */
 
                 val showOrderbook = showOrderbook.buy()
                 val rival = showOrderbook.body.orders
+                        .filter { order -> order.trading_partner_information.username != "altrulazor" }
+                        .filter { order -> order.price < currentBuys.weightedAverage }
                         .first { order ->
                             order.max_amount_currency_to_trade > amountOfCoins
                                     || order.max_volume_currency_to_pay > config.minVolume }
@@ -93,13 +95,29 @@ class Buyer(
                 val adjustedPrice = rival.price.add(BigDecimal.ONE)
                         .setScale(2, RoundingMode.HALF_DOWN)
 
-                createOrder(amountOfCoins, adjustedPrice, myOrders.body.credits)
+                var currentPrice = BigDecimal.ZERO
+
+                if (myOrders.body.orders != null) {
+                    currentPrice = myOrders.body.orders!!
+                            .filter { order -> order.trading_pair == "btceur" }
+                            .filter { order -> order.type == TransactionType.BUY.toString() }
+                            .map { order -> order.price }
+                            .min()
+                }
+
+                if (adjustedPrice == currentPrice) {   //TODO cannot fit because adjustedPrice+=1 !!
+                    log.info("Price of $adjustedPrice is unchanged")
+                } else {
+                    if (config.isLiveChange) deleteOrders(myOrders)
+                    createOrder(amountOfCoins, adjustedPrice, myOrders.body.credits)
+                }
             }
         }
     }
 
     fun calculateAmountOfCoins(fidorReservation: FidorReservation, averagePrice: BigDecimal): BigDecimal {
-        return fidorReservation.available_amount.divide(averagePrice, 8, RoundingMode.DOWN)
+        return fidorReservation.available_amount
+                .divide(averagePrice, 8, RoundingMode.DOWN)
     }
 
     private fun createOrder(availableCoins: BigDecimal, averagePrice: BigDecimal, credits: Int) {

@@ -84,6 +84,7 @@ class Seller(
 
             val showOrderbook = showOrderbook.sell()
             val rival = showOrderbook.body.orders
+                    .filter { order -> order.price < currentSells.weightedAverage }
                     .first { order ->
                         order.max_amount_currency_to_trade > availableCoins
                                 || order.max_volume_currency_to_pay > config.minVolume }

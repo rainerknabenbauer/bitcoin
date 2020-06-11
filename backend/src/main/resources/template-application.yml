@@ -6,7 +6,15 @@ bitcoin:
   apiSecret: API_SECRET
   trading:
     selling:
-      start: AUTOMATIC_SELLING_PRICE
+      active: false
+      automatized: false
+      start: START_SELLING
+      minVolume: MINIMUM_RELEVANT_RIVAL_AMOUNT_IN_EUR
+    buying:
+      active: false
+      automatized: true
+      start: START_BUYING
+      minVolume: MINIMUM_RELEVANT_RIVAL_AMOUNT_IN_EUR
 default:
   user: USER
   password: PASSWORD
