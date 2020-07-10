@@ -1,7 +1,0 @@
-{
-  "api_key":		"{{api_key}}",
-  "api_secret":	"{{api_secret}}",
-  "type":			  "{{type}}",
-  "order_id":		"{{order_id}}",
-  "amount":		  {{amount}}
-}
