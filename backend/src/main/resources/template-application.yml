@@ -1,24 +1,61 @@
 server:
   port: 8888
 
+bitcoin:
+  apiKey: API_KEY
+  apiSecret: API_SECRET
+  trading:
+    selling:
+      active: false
+      automatized: false
+      start: START_SELLING
+      minVolume: MINIMUM_RELEVANT_RIVAL_AMOUNT_IN_EUR
+    buying:
+      active: false
+      automatized: true
+      start: START_BUYING
+      minVolume: MINIMUM_RELEVANT_RIVAL_AMOUNT_IN_EUR
+default:
+  user: USER
+  password: PASSWORD
+
+
 spring:
-  application:
-    name: stundenzettel
   profiles:
-    active: dev
+    active: prod
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017
+      database: bitcoin
+  mail:
+    host: SMTP-HOST
+    port: PORT
+    username: EMAIL
+    password: PASSWORD
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls: true
 
 ---
 spring:
   profiles: dev
-  data:
-    mongodb:
-      uri: mongodb://127.0.0.1:27017
-      database: stundenzettel
+api:
+  isLive: false
+mail:
+  recipients: EMAIL,EMAIL
+bitcoin:
+  account:
+    created: 2020-04-01T00:00:00
 
 ---
 spring:
   profiles: prod
-  data:
-    mongodb:
-      uri: mongodb://127.0.0.1:27017
-      database: stundenzettel
+api:
+  isLive: true
+mail:
+  recipients: EMAIL,EMAIL
+bitcoin:
+  account:
+    created: 2012-01-01T00:00:00
